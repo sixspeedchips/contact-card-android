@@ -1,11 +1,11 @@
-## Introduction
+### Introduction
 
-## Overview
+### Overview
 
-## Intended Users
+### Intended Users
 
-### First Milestone
-* [ ] Description
+## First Milestone
+* [x] Description
 * [ ] Intended Users
 * [ ] Entity-relationship diagrams (ERDs)
 * [ ] Wireframes
