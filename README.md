@@ -1,5 +1,3 @@
-# Biz Swap
-
 ## Introduction
 
 ## Overview
