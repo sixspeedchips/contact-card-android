@@ -4,12 +4,13 @@
 
 ### Intended Users
 
+[User Stories](docs/user-stories.md)
 ## First Milestone
 * [x] Description
 * [ ] Intended Users
+* [x] User Stories
 * [ ] Entity-relationship diagrams (ERDs)
 * [ ] Wireframes
-* [ ] User Stories
 
 
 ### Second Milestone
