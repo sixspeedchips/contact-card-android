@@ -12,5 +12,6 @@
 * [ ] Entity-relationship diagrams (ERDs)
 * [ ] Wireframes
 
+[Entity Relationship Diagrams](docs/erd.md)
 
 ### Second Milestone
