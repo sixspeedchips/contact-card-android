@@ -1,4 +1,4 @@
 
 ## Wire-Frame Diagram
 
-[![place holder]()](wireframe.pdf)
+[![Wire-frames](wireframe.png)](wireframe.pdf)
