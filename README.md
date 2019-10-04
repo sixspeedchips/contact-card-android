@@ -1,7 +1,7 @@
 
 ## Introduction
 
-Those who work in professional settings may find it common to exchange business cards upon meeting someone new. Business cards provide a concise medium for exchanging useful information about what one does, where one works and how to be easily contacted. In today's work they often function as a mark of one's on personal brand. However, frequent exchanges often lead people to accumulate business cards with no easy way to store or index them.
+Those who work in professional settings may find it common to exchange business cards upon meeting someone new. Business cards provide a concise medium for exchanging useful information about what one does, where one works and how to be easily contacted. In today's world they often function as an advertisement of one's own personal brand. However, frequent exchanges often lead people to accumulation of business cards with no easy way to store or index them.
 
 ## Overview
 
