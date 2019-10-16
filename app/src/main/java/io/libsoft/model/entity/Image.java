@@ -7,6 +7,7 @@ import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 import java.util.Date;
 
+
 @Entity(
     foreignKeys = {
         @ForeignKey(
@@ -17,29 +18,32 @@ import java.util.Date;
         )
     }
 )
-public class RawText {
+public class Image {
 
-  @ColumnInfo(name = "raw_text_id")
-  @PrimaryKey(autoGenerate = true)
+  @ColumnInfo( name = "processes_image_id" )
+  @PrimaryKey( autoGenerate = true )
   private Long id;
 
-  @ColumnInfo(name = "contact_id")
+  @ColumnInfo( name = "contact_id" )
   private Long contactId;
+
+  @ColumnInfo(name = "image_url")
+  private String Url;
+
+  @ColumnInfo(name = "raw")
+  private boolean isRaw;
 
   @NonNull
   @ColumnInfo(index = true)
-  private Date dateCreated = new Date();
-
-  @ColumnInfo
-  private String textOutput;
+  private Date created = new Date();
 
   public Long getId() {
     return id;
   }
 
   @NonNull
-  public Date getDateCreated() {
-    return dateCreated;
+  public Date getCreated() {
+    return created;
   }
 
   public Long getContactId() {
@@ -50,11 +54,19 @@ public class RawText {
     this.contactId = contactId;
   }
 
-  public String getTextOutput() {
-    return textOutput;
+  public String getUrl() {
+    return Url;
   }
 
-  public void setTextOutput(String textOutput) {
-    this.textOutput = textOutput;
+  public void setUrl(String url) {
+    Url = url;
+  }
+
+  public boolean isRaw() {
+    return isRaw;
+  }
+
+  public void setRaw(boolean raw) {
+    isRaw = raw;
   }
 }
