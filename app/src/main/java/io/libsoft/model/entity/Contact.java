@@ -1,6 +1,7 @@
 package io.libsoft.model.entity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -13,6 +14,23 @@ public class Contact {
   @ColumnInfo(name = "contact_id")
   private Long id;
 
+
+  @Nullable
+  @ColumnInfo(index = true)
+  private String firstName;
+
+  @Nullable
+  @ColumnInfo(index = true)
+  private String lastName;
+
+  @Nullable
+  @ColumnInfo
+  private String email;
+
+  @Nullable
+  @ColumnInfo
+  private String phone;
+
   @NonNull
   @ColumnInfo(index = true)
   private Date dateCreated = new Date();
@@ -20,18 +38,6 @@ public class Contact {
   @NonNull
   @ColumnInfo(index = true)
   private Date dateUpdated = new Date();
-
-  @ColumnInfo(index = true)
-  private String firstName;
-
-  @ColumnInfo(index = true)
-  private String lastName;
-
-  @ColumnInfo
-  private String email;
-
-  @ColumnInfo
-  private String phone;
 
   public Long getId() {
     return id;
