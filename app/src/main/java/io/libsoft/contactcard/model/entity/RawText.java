@@ -1,4 +1,4 @@
-package io.libsoft.model.entity;
+package io.libsoft.contactcard.model.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -6,7 +6,6 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 import java.util.Date;
-
 
 @Entity(
     foreignKeys = {
@@ -18,32 +17,29 @@ import java.util.Date;
         )
     }
 )
-public class Image {
+public class RawText {
 
-  @ColumnInfo( name = "processes_image_id" )
-  @PrimaryKey( autoGenerate = true )
+  @ColumnInfo(name = "raw_text_id")
+  @PrimaryKey(autoGenerate = true)
   private Long id;
 
-  @ColumnInfo( name = "contact_id" )
+  @ColumnInfo(name = "contact_id", index = true)
   private Long contactId;
 
-  @ColumnInfo(name = "image_url")
-  private String Url;
-
-  @ColumnInfo(name = "raw")
-  private boolean isRaw;
-
   @NonNull
-  @ColumnInfo(index = true)
-  private Date created = new Date();
+  @ColumnInfo(name = "created", index = true)
+  private Date dateCreated = new Date();
+
+  @ColumnInfo(name = "text_output")
+  private String textOutput;
 
   public Long getId() {
     return id;
   }
 
   @NonNull
-  public Date getCreated() {
-    return created;
+  public Date getDateCreated() {
+    return dateCreated;
   }
 
   public Long getContactId() {
@@ -54,19 +50,19 @@ public class Image {
     this.contactId = contactId;
   }
 
-  public String getUrl() {
-    return Url;
+  public void setId(Long id) {
+    this.id = id;
   }
 
-  public void setUrl(String url) {
-    Url = url;
+  public void setDateCreated(@NonNull Date dateCreated) {
+    this.dateCreated = dateCreated;
   }
 
-  public boolean isRaw() {
-    return isRaw;
+  public String getTextOutput() {
+    return textOutput;
   }
 
-  public void setRaw(boolean raw) {
-    isRaw = raw;
+  public void setTextOutput(String textOutput) {
+    this.textOutput = textOutput;
   }
 }

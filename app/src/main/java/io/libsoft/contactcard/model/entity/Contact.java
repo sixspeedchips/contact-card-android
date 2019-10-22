@@ -1,4 +1,4 @@
-package io.libsoft.model.entity;
+package io.libsoft.contactcard.model.entity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,11 +16,11 @@ public class Contact {
 
 
   @Nullable
-  @ColumnInfo(index = true)
+  @ColumnInfo(name = "first_name", index = true)
   private String firstName;
 
   @Nullable
-  @ColumnInfo(index = true)
+  @ColumnInfo(name = "last_name", index = true)
   private String lastName;
 
   @Nullable
@@ -33,24 +33,27 @@ public class Contact {
 
   @NonNull
   @ColumnInfo(index = true)
-  private Date dateCreated = new Date();
+  private Date created = new Date();
 
   @NonNull
   @ColumnInfo(index = true)
-  private Date dateUpdated = new Date();
+  private Date updated = new Date();
 
   public Long getId() {
     return id;
   }
 
   @NonNull
-  public Date getDateCreated() {
-    return dateCreated;
+  public Date getCreated() {
+    return created;
   }
 
-  @NonNull
-  public Date getDateUpdated() {
-    return dateUpdated;
+  public void setCreated(@NonNull Date created) {
+    this.created = created;
+  }
+
+  public void setDateUpdated() {
+    this.updated = new Date();
   }
 
   public String getFirstName() {
@@ -84,4 +87,18 @@ public class Contact {
   public void setPhone(String phone) {
     this.phone = phone;
   }
+
+  @NonNull
+  public Date getUpdated() {
+    return updated;
+  }
+
+  public void setUpdated(@NonNull Date updated) {
+    this.updated = updated;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
 }

@@ -1,10 +1,11 @@
-package io.libsoft.model.dao;
+package io.libsoft.contactcard.model.dao;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
-import io.libsoft.model.entity.Contact;
+import io.libsoft.contactcard.model.entity.Contact;
 
 @Dao
 public interface ContactDao {
@@ -17,5 +18,9 @@ public interface ContactDao {
 
   @Update
   int update(Contact contact);
+
+  @Delete
+  int delete(Contact... contacts);
+
 
 }

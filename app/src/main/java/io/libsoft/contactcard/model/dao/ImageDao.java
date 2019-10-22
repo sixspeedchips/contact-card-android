@@ -1,10 +1,9 @@
-package io.libsoft.model.dao;
+package io.libsoft.contactcard.model.dao;
 
-import android.provider.ContactsContract.CommonDataKinds.Im;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-import io.libsoft.model.entity.Image;
+import io.libsoft.contactcard.model.entity.Image;
 import java.util.List;
 
 @Dao

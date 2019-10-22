@@ -1,9 +1,9 @@
-package io.libsoft.model.dao;
+package io.libsoft.contactcard.model.dao;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-import io.libsoft.model.entity.ProcessedText;
+import io.libsoft.contactcard.model.entity.ProcessedText;
 import java.util.List;
 
 @Dao
