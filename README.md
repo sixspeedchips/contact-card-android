@@ -11,6 +11,7 @@ This project is intended to provide an easy method for people to store the busin
 * [User Stories](docs/user-stories.md)
 * [Entity Relationship Diagrams](docs/erd.md)
 * [Wireframes](docs/wireframe.md)
+* [First Milestone]()
 
 #### First Milestone
 * [x] Description
