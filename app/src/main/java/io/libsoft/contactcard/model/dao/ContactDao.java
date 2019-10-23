@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 import io.libsoft.contactcard.model.entity.Contact;
+import java.util.List;
 
 @Dao
 public interface ContactDao {
@@ -15,6 +16,9 @@ public interface ContactDao {
 
   @Query("SELECT * FROM contact WHERE contact_id=:id")
   Contact getContactById(Long id);
+
+  @Query("SELECT * FROM contact")
+  List<Contact> getAllContacts();
 
   @Update
   int update(Contact contact);

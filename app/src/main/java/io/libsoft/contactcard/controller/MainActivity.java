@@ -5,6 +5,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import io.libsoft.contactcard.R;
 
@@ -17,18 +18,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+      Fragment selectedFragment = null;
       switch (item.getItemId()) {
         case R.id.navigation_home:
-          mTextMessage.setText(R.string.title_home);
-          return true;
-        case R.id.navigation_dashboard:
-          mTextMessage.setText(R.string.title_dashboard);
-          return true;
-        case R.id.navigation_notifications:
-          mTextMessage.setText(R.string.title_notifications);
-          return true;
+          selectedFragment = new CameraFragment();
+          getSupportFragmentManager().beginTransaction()
+              .replace(R.id.fragment_container, selectedFragment).commit();
+          break;
       }
-      return false;
+      return true;
     }
   };
 

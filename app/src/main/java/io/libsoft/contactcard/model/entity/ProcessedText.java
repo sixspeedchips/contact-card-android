@@ -35,10 +35,6 @@ public class ProcessedText {
   @ColumnInfo(index = true)
   private Date created = new Date();
 
-  @NonNull
-  @ColumnInfo(index = true)
-  private Date updated  = new Date();
-
   @ColumnInfo(name = "field_value")
   private String value;
 
@@ -74,15 +70,6 @@ public class ProcessedText {
 
   public void setCreated(@NonNull Date created) {
     this.created = created;
-  }
-
-  @NonNull
-  public Date getUpdated() {
-    return updated;
-  }
-
-  public void setUpdated(@NonNull Date updated) {
-    this.updated = updated;
   }
 
   public String getValue() {
