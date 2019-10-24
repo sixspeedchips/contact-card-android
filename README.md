@@ -15,7 +15,3 @@ This project is intended to provide an easy method for people to store the busin
 * [Wireframes](docs/wireframe.md)
 * [Milestones](docs/milestones.md)
 
-* [Data Definition Language Files](docs/ddl.md)
-* [Dao](docs/dao.md)
-* [Entities](docs/entities.md)
-* [Database Source](https://github.com/swandivejack/contact-card-android/blob/master/app/src/main/java/io/libsoft/contactcard/service/ContactDatabase.java)
