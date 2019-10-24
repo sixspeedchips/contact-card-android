@@ -1,4 +1,4 @@
 
 ## Wire-Frame Diagram
 
-[![Wire-frames](wireframe.png)](wireframe.pdf)
+[![Wire-frames](resources/wireframe.png)](resources/wireframe.pdf)

@@ -1,0 +1,324 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "2115c0eff41aab5b7861f9f9f50f4a33",
+    "entities": [
+      {
+        "tableName": "Contact",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`contact_id` INTEGER PRIMARY KEY AUTOINCREMENT, `first_name` TEXT, `last_name` TEXT, `email` TEXT, `phone` TEXT, `created` INTEGER NOT NULL, `updated` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "contact_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "firstName",
+            "columnName": "first_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastName",
+            "columnName": "last_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "phone",
+            "columnName": "phone",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updated",
+            "columnName": "updated",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "contact_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_Contact_first_name",
+            "unique": false,
+            "columnNames": [
+              "first_name"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Contact_first_name` ON `${TABLE_NAME}` (`first_name`)"
+          },
+          {
+            "name": "index_Contact_last_name",
+            "unique": false,
+            "columnNames": [
+              "last_name"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Contact_last_name` ON `${TABLE_NAME}` (`last_name`)"
+          },
+          {
+            "name": "index_Contact_created",
+            "unique": false,
+            "columnNames": [
+              "created"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Contact_created` ON `${TABLE_NAME}` (`created`)"
+          },
+          {
+            "name": "index_Contact_updated",
+            "unique": false,
+            "columnNames": [
+              "updated"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Contact_updated` ON `${TABLE_NAME}` (`updated`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Image",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`image_id` INTEGER PRIMARY KEY AUTOINCREMENT, `contact_id` INTEGER, `image_url` TEXT, `raw` INTEGER NOT NULL, `created` INTEGER NOT NULL, FOREIGN KEY(`contact_id`) REFERENCES `Contact`(`contact_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "image_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "contactId",
+            "columnName": "contact_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "Url",
+            "columnName": "image_url",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "raw",
+            "columnName": "raw",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "image_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_Image_contact_id",
+            "unique": false,
+            "columnNames": [
+              "contact_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Image_contact_id` ON `${TABLE_NAME}` (`contact_id`)"
+          },
+          {
+            "name": "index_Image_created",
+            "unique": false,
+            "columnNames": [
+              "created"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Image_created` ON `${TABLE_NAME}` (`created`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Contact",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "contact_id"
+            ],
+            "referencedColumns": [
+              "contact_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ProcessedText",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`processed_text_id` INTEGER, `canonical_key` TEXT, `contact_id` INTEGER, `created` INTEGER NOT NULL, `field_value` TEXT, PRIMARY KEY(`processed_text_id`), FOREIGN KEY(`contact_id`) REFERENCES `Contact`(`contact_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "processed_text_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "canonicalKey",
+            "columnName": "canonical_key",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "contactId",
+            "columnName": "contact_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "field_value",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "processed_text_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_ProcessedText_canonical_key",
+            "unique": false,
+            "columnNames": [
+              "canonical_key"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ProcessedText_canonical_key` ON `${TABLE_NAME}` (`canonical_key`)"
+          },
+          {
+            "name": "index_ProcessedText_contact_id",
+            "unique": false,
+            "columnNames": [
+              "contact_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ProcessedText_contact_id` ON `${TABLE_NAME}` (`contact_id`)"
+          },
+          {
+            "name": "index_ProcessedText_created",
+            "unique": false,
+            "columnNames": [
+              "created"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ProcessedText_created` ON `${TABLE_NAME}` (`created`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Contact",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "contact_id"
+            ],
+            "referencedColumns": [
+              "contact_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "RawText",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`raw_text_id` INTEGER PRIMARY KEY AUTOINCREMENT, `contact_id` INTEGER, `created` INTEGER NOT NULL, `text_output` TEXT, FOREIGN KEY(`contact_id`) REFERENCES `Contact`(`contact_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "raw_text_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "contactId",
+            "columnName": "contact_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textOutput",
+            "columnName": "text_output",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "raw_text_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_RawText_contact_id",
+            "unique": false,
+            "columnNames": [
+              "contact_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_RawText_contact_id` ON `${TABLE_NAME}` (`contact_id`)"
+          },
+          {
+            "name": "index_RawText_created",
+            "unique": false,
+            "columnNames": [
+              "created"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_RawText_created` ON `${TABLE_NAME}` (`created`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Contact",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "contact_id"
+            ],
+            "referencedColumns": [
+              "contact_id"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2115c0eff41aab5b7861f9f9f50f4a33')"
+    ]
+  }
+}

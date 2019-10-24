@@ -48,7 +48,7 @@ public class Contact {
     return created;
   }
 
-  public void setCreated(@NonNull Date created) {
+    public void setCreated(@NonNull Date created) {
     this.created = created;
   }
 

@@ -8,9 +8,14 @@ Those who work in professional settings may find it common to exchange business 
 This project is intended to provide an easy method for people to store the business cards they acquire as contacts in their phone. When a rectangle roughly matching the dimensions of a business card enters the frame of the camera a raw image is taken as input, transformed and text is extracted. The extracted text is parsed via trained neural net and offered to the user as a contact where tags can be added and the contact saved. Later implementations may add the ability to search the contact on popular social platforms by returning API queries based on the processed text, which then the user may attempt to add to their own accounts.
 
 ### Links
+* [Sources](docs/sources)
 * [User Stories](docs/user-stories.md)
 * [Intended Users](docs/intended-users.md)
 * [Entity Relationship Diagrams](docs/erd.md)
 * [Wireframes](docs/wireframe.md)
 * [Milestones](docs/milestones.md)
 
+* [Data Definition Language Files](docs/ddl.md)
+* [Dao](docs/dao.md)
+* [Entities](docs/entities.md)
+* [Database Source](https://github.com/swandivejack/contact-card-android/blob/master/app/src/main/java/io/libsoft/contactcard/service/ContactDatabase.java)

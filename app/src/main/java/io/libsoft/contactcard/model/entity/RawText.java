@@ -28,7 +28,7 @@ public class RawText {
 
   @NonNull
   @ColumnInfo(name = "created", index = true)
-  private Date dateCreated = new Date();
+  private Date created = new Date();
 
   @ColumnInfo(name = "text_output")
   private String textOutput;
@@ -38,8 +38,8 @@ public class RawText {
   }
 
   @NonNull
-  public Date getDateCreated() {
-    return dateCreated;
+  public Date getCreated() {
+    return created;
   }
 
   public Long getContactId() {
@@ -54,8 +54,8 @@ public class RawText {
     this.id = id;
   }
 
-  public void setDateCreated(@NonNull Date dateCreated) {
-    this.dateCreated = dateCreated;
+  public void setCreated(@NonNull Date created) {
+    this.created = created;
   }
 
   public String getTextOutput() {

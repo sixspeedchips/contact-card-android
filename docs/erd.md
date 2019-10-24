@@ -1,5 +1,5 @@
 
 ## Entity Relationship Diagrams
 
-[![erd](erd.png)](erd.pdf)
+[![erd](resources/erd.png)](resources/erd.pdf)
 

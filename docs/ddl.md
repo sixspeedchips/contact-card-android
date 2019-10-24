@@ -1,7 +1,7 @@
 ## Data Definition Language (DDL) for data model
 
 ```sql
-CREATE TABLE IF NOT EXISTS `contact`
+CREATE TABLE IF NOT EXISTS `Contact`
 (
     `contact_id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `first_name` TEXT,
@@ -11,11 +11,11 @@ CREATE TABLE IF NOT EXISTS `contact`
     `created`    INTEGER NOT NULL,
     `updated`    INTEGER NOT NULL
 );
-CREATE INDEX IF NOT EXISTS `index_Contact_first_name` ON `contact` (`first_name`);
-CREATE INDEX IF NOT EXISTS `index_Contact_last_name` ON `contact` (`last_name`);
-CREATE INDEX IF NOT EXISTS `index_Contact_created` ON `contact` (`created`);
-CREATE INDEX IF NOT EXISTS `index_Contact_updated` ON `contact` (`updated`);
-CREATE TABLE IF NOT EXISTS `image`
+CREATE INDEX IF NOT EXISTS `index_Contact_first_name` ON `Contact` (`first_name`);
+CREATE INDEX IF NOT EXISTS `index_Contact_last_name` ON `Contact` (`last_name`);
+CREATE INDEX IF NOT EXISTS `index_Contact_created` ON `Contact` (`created`);
+CREATE INDEX IF NOT EXISTS `index_Contact_updated` ON `Contact` (`updated`);
+CREATE TABLE IF NOT EXISTS `Image`
 (
     `image_id`   INTEGER PRIMARY KEY AUTOINCREMENT,
     `contact_id` INTEGER,
@@ -24,9 +24,9 @@ CREATE TABLE IF NOT EXISTS `image`
     `created`    INTEGER NOT NULL,
     FOREIGN KEY (`contact_id`) REFERENCES `Contact` (`contact_id`) ON UPDATE NO ACTION ON DELETE CASCADE
 );
-CREATE INDEX IF NOT EXISTS `index_Image_contact_id` ON `image` (`contact_id`);
-CREATE INDEX IF NOT EXISTS `index_Image_created` ON `image` (`created`);
-CREATE TABLE IF NOT EXISTS `processed_text`
+CREATE INDEX IF NOT EXISTS `index_Image_contact_id` ON `Image` (`contact_id`);
+CREATE INDEX IF NOT EXISTS `index_Image_created` ON `Image` (`created`);
+CREATE TABLE IF NOT EXISTS `ProcessedText`
 (
     `processed_text_id` INTEGER,
     `canonical_key`     TEXT,
@@ -36,10 +36,10 @@ CREATE TABLE IF NOT EXISTS `processed_text`
     PRIMARY KEY (`processed_text_id`),
     FOREIGN KEY (`contact_id`) REFERENCES `Contact` (`contact_id`) ON UPDATE NO ACTION ON DELETE CASCADE
 );
-CREATE INDEX IF NOT EXISTS `index_ProcessedText_canonical_key` ON `processed_text` (`canonical_key`);
-CREATE INDEX IF NOT EXISTS `index_ProcessedText_contact_id` ON `processed_text` (`contact_id`);
-CREATE INDEX IF NOT EXISTS `index_ProcessedText_created` ON `processed_text` (`created`);
-CREATE TABLE IF NOT EXISTS `raw_text`
+CREATE INDEX IF NOT EXISTS `index_ProcessedText_canonical_key` ON `ProcessedText` (`canonical_key`);
+CREATE INDEX IF NOT EXISTS `index_ProcessedText_contact_id` ON `ProcessedText` (`contact_id`);
+CREATE INDEX IF NOT EXISTS `index_ProcessedText_created` ON `ProcessedText` (`created`);
+CREATE TABLE IF NOT EXISTS `RawText`
 (
     `raw_text_id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `contact_id`  INTEGER,
@@ -47,8 +47,9 @@ CREATE TABLE IF NOT EXISTS `raw_text`
     `text_output` TEXT,
     FOREIGN KEY (`contact_id`) REFERENCES `Contact` (`contact_id`) ON UPDATE NO ACTION ON DELETE CASCADE
 );
-CREATE INDEX IF NOT EXISTS `index_RawText_contact_id` ON `raw_text` (`contact_id`);
-CREATE INDEX IF NOT EXISTS `index_RawText_created` ON `raw_text` (`created`);
+CREATE INDEX IF NOT EXISTS `index_RawText_contact_id` ON `RawText` (`contact_id`);
+CREATE INDEX IF NOT EXISTS `index_RawText_created` ON `RawText` (`created`);
+
 ```
 
 [`ddl.sql`](ddl.sql)
