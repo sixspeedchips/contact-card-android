@@ -1,9 +1,10 @@
-package io.libsoft;
+package io.libsoft.contactcard;
 
 import android.content.Context;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.runner.AndroidJUnit4;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -22,6 +23,6 @@ public class ExampleInstrumentedTest {
     // Context of the app under test.
     Context appContext = InstrumentationRegistry.getTargetContext();
 
-    assertEquals("io.libsoft", appContext.getPackageName());
+    Assert.assertEquals("io.libsoft.contactcard", appContext.getPackageName());
   }
 }

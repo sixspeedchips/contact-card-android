@@ -1,4 +1,4 @@
-package io.libsoft;
+package io.libsoft.contactcard;
 
 import org.junit.Test;
 
@@ -13,6 +13,6 @@ public class ExampleUnitTest {
 
   @Test
   public void addition_isCorrect() {
-    assertEquals(4, 2 + 2);
+    Assert.assertEquals(4, 2 + 2);
   }
 }
