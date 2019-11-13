@@ -4,59 +4,92 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.service.GoogleSignInService;
 
-public class MainActivity extends AppCompatActivity {
-
-
-  private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-      = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-      Fragment selectedFragment = null;
-
-      return true;
-    }
-  };
+public class MainActivity extends AppCompatActivity
+    implements NavigationView.OnNavigationItemSelectedListener {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-    navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-    navigation.setSelectedItemId(R.id.navigation_camera);
-    Fragment cameraFragment = new CameraFragment();
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+
+    FloatingActionButton fab = findViewById(R.id.fab);
+    fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+        .setAction("Action", null).show());
+
+    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+    drawer.addDrawerListener(toggle);
+    toggle.syncState();
+
+    NavigationView navigationView = findViewById(R.id.nav_view);
+    navigationView.setNavigationItemSelectedListener(this);
+    CameraFragment cameraFragment = new CameraFragment();
     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,cameraFragment).commit();
 
   }
 
   @Override
+  public void onBackPressed() {
+    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+    if (drawer.isDrawerOpen(GravityCompat.START)) {
+      drawer.closeDrawer(GravityCompat.START);
+    } else {
+      super.onBackPressed();
+    }
+  }
+
+  @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.options,menu);
-    super.onCreateOptionsMenu(menu);
+    getMenuInflater().inflate(R.menu.options, menu);
     return true;
   }
 
   @Override
-  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    boolean handled = true;
-    switch (item.getItemId()) {
-      case R.id.sign_out:
-        signOut();
-        break;
-      default:
-        handled = super.onOptionsItemSelected(item);
+  public boolean onOptionsItemSelected(MenuItem item) {
+    int id = item.getItemId();
+    if (id == R.id.action_settings) {
+      return true;
+    } else if (id == R.id.sign_out){
+      signOut();
     }
-    return handled;
+
+    return super.onOptionsItemSelected(item);
   }
+
+  @SuppressWarnings("StatementWithEmptyBody")
+  @Override
+  public boolean onNavigationItemSelected(MenuItem item) {
+    int id = item.getItemId();
+
+    if (id == R.id.nav_camera) {
+    } else if (id == R.id.nav_gallery) {
+    } else if (id == R.id.nav_slideshow) {
+    } else if (id == R.id.nav_manage) {
+    } else if (id == R.id.nav_share) {
+
+    } else if (id == R.id.nav_send) {
+
+    }
+
+    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+    drawer.closeDrawer(GravityCompat.START);
+    return true;
+  }
+
 
   private void signOut() {
     GoogleSignInService.getInstance().signOut()
@@ -66,5 +99,4 @@ public class MainActivity extends AppCompatActivity {
           startActivity(intent);
         });
   }
-
 }

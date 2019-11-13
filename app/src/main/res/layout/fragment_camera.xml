@@ -3,9 +3,13 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  android:id="@+id/camera_screen"
   tools:context=".controller.CameraFragment">
 
-  <ImageView
+  <TextureView
+    android:id="@+id/camera_preview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent"
+    />
+
 </FrameLayout>
