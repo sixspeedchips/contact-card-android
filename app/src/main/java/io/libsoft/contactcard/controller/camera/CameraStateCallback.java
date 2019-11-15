@@ -2,7 +2,7 @@ package io.libsoft.contactcard.controller.camera;
 
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraDevice.StateCallback;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class CameraStateCallback extends StateCallback {
 

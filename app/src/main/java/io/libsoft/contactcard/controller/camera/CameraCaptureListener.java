@@ -4,7 +4,7 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCaptureSession.CaptureCallback;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class CameraCaptureListener extends CaptureCallback {
 

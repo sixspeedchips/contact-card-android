@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "io.libsoft.contactcard"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -39,6 +39,11 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    implementation ('org.bytedeco:javacv-platform:1.5.2'){
+//        exclude group:
+    }
+
 
     def room_version = "2.2.0"
     implementation "androidx.room:room-runtime:$room_version"

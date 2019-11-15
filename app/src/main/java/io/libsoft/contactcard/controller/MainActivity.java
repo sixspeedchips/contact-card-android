@@ -2,6 +2,7 @@ package io.libsoft.contactcard.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -14,9 +15,14 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.service.GoogleSignInService;
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.core.Mat;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener {
+
+  private BaseLoaderCallback mLoaderCallback;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +31,7 @@ public class MainActivity extends AppCompatActivity
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    FloatingActionButton fab = findViewById(R.id.fab);
-    fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        .setAction("Action", null).show());
+
 
     DrawerLayout drawer = findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -37,6 +41,8 @@ public class MainActivity extends AppCompatActivity
 
     NavigationView navigationView = findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
+
+
     CameraFragment cameraFragment = new CameraFragment();
     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,cameraFragment).commit();
 
@@ -99,4 +105,6 @@ public class MainActivity extends AppCompatActivity
           startActivity(intent);
         });
   }
+
+
 }
