@@ -32,6 +32,7 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.googlecode.tesseract.android.TessBaseAPI;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.controller.camera.CameraCaptureListener;
 import io.libsoft.contactcard.controller.camera.CameraCaptureSessionStateCallback;
@@ -42,17 +43,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.bytedeco.leptonica.PIX;
-
-import org.bytedeco.leptonica.global.lept;
-import org.bytedeco.tesseract.TessBaseAPI;
 import org.opencv.core.Mat;
+
+//import org.bytedeco.leptonica.PIX;
+//
+//import org.bytedeco.leptonica.global.lept;
+//import org.bytedeco.tesseract.TessBaseAPI;
+//import org.bytedeco.javacpp.lept;
+//import org.bytedeco.javacpp.lept.PIX;
+//import org.bytedeco.javacpp.tesseract.TessBaseAPI;
 
 
 public class CameraFragment extends Fragment {
@@ -60,9 +64,9 @@ public class CameraFragment extends Fragment {
 
   private static final int PERMISSION_GRANTED = PackageManager.PERMISSION_GRANTED;
 
-  static {
-    System.loadLibrary("opencv_java");
-  }
+//  static {
+//    System.loadLibrary("opencv_java");
+//  }
 
   private final int REQUEST_CODE = 1033;
   private final String LOG_TAG = "camerafragment";
@@ -123,7 +127,7 @@ public class CameraFragment extends Fragment {
     }
     Log.d(LOG_TAG, file.getAbsolutePath());
     api = new TessBaseAPI();
-    api.Init(dir.getAbsolutePath(), "eng");
+    api.init(dataPath, "eng");
   }
 
   private void initListeners() {
@@ -255,9 +259,10 @@ public class CameraFragment extends Fragment {
             byte[] bytes = new byte[buffer.capacity()];
             buffer.get(bytes);
             mat.put(0, 0, bytes);
+            System.out.println("HERE: " + mat.toString());
             Log.d(LOG_TAG, "Captured: " + Arrays.toString(mat.get(0, 0)));
             save(bytes);
-            String out = getOCRResult();
+            String out = getOCRResult(bytes);
             Log.d(LOG_TAG, out);
 
             Toast.makeText(context,"Text: " + out, Toast.LENGTH_LONG).show();
@@ -308,12 +313,13 @@ public class CameraFragment extends Fragment {
   }
 
 
-  public String getOCRResult() {
-    PIX im = lept.pixRead(file.getAbsolutePath());
-    api.SetImage(im);
-    Log.d(LOG_TAG, api.toString());
-//    return "";
-    return api.GetUTF8Text().getString();
+  public String getOCRResult(byte[] bytes) {
+//    Log.d(LOG_TAG, api.toString());
+//    api.setImage(file);
+//    api.setImage(bytes, imageDimensions.getWidth(), imageDimensions.getHeight(), 4,4*imageDimensions.getWidth());
+
+    return "";
+//    return api.getUTF8Text();
   }
 
   private void unlockFocus() {
