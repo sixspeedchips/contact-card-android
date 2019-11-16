@@ -14,7 +14,6 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureRequest.Builder;
-import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
@@ -23,6 +22,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -32,23 +32,18 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.googlecode.tesseract.android.TessBaseAPI;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.controller.camera.CameraCaptureListener;
 import io.libsoft.contactcard.controller.camera.CameraCaptureSessionStateCallback;
+import io.libsoft.contactcard.controller.camera.CameraImageAvailableListener;
 import io.libsoft.contactcard.controller.camera.CameraStateCallback;
 import io.libsoft.contactcard.controller.camera.CameraSurfaceTextureListener;
+import io.libsoft.contactcard.service.FileManagerService;
+import io.libsoft.contactcard.service.ImageProcessingService;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.opencv.core.Mat;
 
 //import org.bytedeco.leptonica.PIX;
 //
@@ -70,9 +65,21 @@ public class CameraFragment extends Fragment {
 
   private final int REQUEST_CODE = 1033;
   private final String LOG_TAG = "camerafragment";
+
+
   private Context context;
   private View view;
   private TextureView textureView;
+
+  private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+
+  static {
+    ORIENTATIONS.append(Surface.ROTATION_0, 90);
+    ORIENTATIONS.append(Surface.ROTATION_90, 0);
+    ORIENTATIONS.append(Surface.ROTATION_180, 270);
+    ORIENTATIONS.append(Surface.ROTATION_270, 180);
+  }
+
   private CameraManager manager;
   private CameraDevice cameraDevice;
   private String cameraId;
@@ -89,45 +96,27 @@ public class CameraFragment extends Fragment {
   private Surface surface;
   private File file;
   private CameraCharacteristics characteristics;
-  private TessBaseAPI api;
+  private FileManagerService fileManagerService;
+  private ImageReader reader;
+
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     context = inflater.getContext();
     view = inflater.inflate(R.layout.fragment_camera, container, false);
-
-    textureView = view.findViewById(R.id.camera_preview);
-    fab = view.findViewById(R.id.fab);
+    fileManagerService = FileManagerService.getInstance();
     manager = ((CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE));
+
+    initViews();
     initListeners();
-    initTessApi();
 
     return view;
   }
 
-  private void initTessApi() {
-    String dataPath = getActivity().getExternalFilesDir(null).toString();
-    File dir = new File(dataPath + "/tessdata/");
-    File file = new File(dataPath + "/tessdata/" + "eng.traineddata");
-    if (!dir.exists()) {
-      Log.d(LOG_TAG, "Created Directory: " + dir.mkdir());
-    }
-    if (!file.exists()) {
-      try {
-        InputStream is = getResources().openRawResource(R.raw.eng);
-        byte[] buffer = new byte[is.available()];
-        is.read(buffer);
-        OutputStream outputStream = new FileOutputStream(file);
-        outputStream.write(buffer);
-        Log.d(LOG_TAG, "Wrote to file: " + file.getAbsolutePath());
-      } catch (IOException e) {
-        Log.e(LOG_TAG, "Error Writing to file: " + file.getAbsolutePath() + e.getMessage());
-      }
-    }
-    Log.d(LOG_TAG, file.getAbsolutePath());
-    api = new TessBaseAPI();
-    api.init(dataPath, "eng");
+  private void initViews() {
+    textureView = view.findViewById(R.id.camera_preview);
+    fab = view.findViewById(R.id.fab);
   }
 
   private void initListeners() {
@@ -153,7 +142,10 @@ public class CameraFragment extends Fragment {
 
     });
     fab.setOnClickListener((view) -> {
-      takePicture();
+      captureImage();
+    });
+    ImageProcessingService.getInstance().getOcrResults().observe(this, (s) -> {
+      Toast.makeText(context, s, Toast.LENGTH_LONG).show();
     });
 
   }
@@ -181,8 +173,8 @@ public class CameraFragment extends Fragment {
     try {
       captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
       captureRequestBuilder.addTarget(surface);
-      cameraDevice
-          .createCaptureSession(Collections.singletonList(surface), sessionStateCallback, null);
+      cameraDevice.createCaptureSession(Collections.singletonList(surface),
+          sessionStateCallback, null);
 
     } catch (CameraAccessException e) {
       e.printStackTrace();
@@ -217,109 +209,51 @@ public class CameraFragment extends Fragment {
     }
   }
 
-
-  private void takePicture() {
-    if (null == cameraDevice) {
-      Log.e(LOG_TAG, "cameraDevice is null");
-      return;
-    }
+  private void captureImage() {
 
     try {
       Log.d(LOG_TAG, "Capturing");
+      reader = ImageReader.newInstance(imageDimensions.getWidth(),
+          imageDimensions.getWidth(), ImageFormat.JPEG, 1);
 
-      ImageReader reader = ImageReader
-          .newInstance(imageDimensions.getWidth(), imageDimensions.getWidth(), ImageFormat.JPEG, 1);
       List<Surface> outputSurfaces = new ArrayList<>(2);
+
       outputSurfaces.add(reader.getSurface());
 
       Builder captureBuilder = cameraDevice
           .createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+
       captureBuilder.addTarget(reader.getSurface());
+
       captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+
       captureBuilder.set(CaptureRequest.JPEG_ORIENTATION,
           characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION));
 
-      File dir = new File(getActivity().getExternalFilesDir(null) + "/images/");
-      if (!dir.exists()) {
-        dir.mkdir();
-      }
-      file = new File(dir.getAbsolutePath(), System.currentTimeMillis() + ".jpg");
-      Log.d(LOG_TAG, "saving file at: " + file);
-      ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
-        @Override
-        public void onImageAvailable(ImageReader reader) {
-          Log.d(LOG_TAG, "image available");
-          Image image = null;
-          try {
-            image = reader.acquireLatestImage();
-            Mat mat = new Mat();
-
-            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-
-            byte[] bytes = new byte[buffer.capacity()];
-            buffer.get(bytes);
-            mat.put(0, 0, bytes);
-            System.out.println("HERE: " + mat.toString());
-            Log.d(LOG_TAG, "Captured: " + Arrays.toString(mat.get(0, 0)));
-            save(bytes);
-            String out = getOCRResult(bytes);
-            Log.d(LOG_TAG, out);
-
-            Toast.makeText(context,"Text: " + out, Toast.LENGTH_LONG).show();
-
-          } catch (IOException e) {
-            e.printStackTrace();
-          } finally {
-            if (image != null) {
-              image.close();
+      CameraImageAvailableListener imageAvailableListener = new CameraImageAvailableListener()
+          .setOnCompleted((imageReader) -> {
+            Log.d(LOG_TAG, "Image available");
+            try (Image image = reader.acquireLatestImage()) {
+              final String saved = fileManagerService.saveImage(image);
             }
-          }
-        }
+          });
 
-        private void save(byte[] bytes) throws IOException {
-          OutputStream output = null;
-          try {
-            output = new FileOutputStream(file);
-            output.write(bytes);
-          } finally {
-            if (output != null) {
-              output.close();
+      reader.setOnImageAvailableListener(imageAvailableListener, mBackgroundHandler);
+      CameraCaptureListener captureListener = new CameraCaptureListener()
+          .setOnCompleted(this::createCameraPreview);
+      CameraCaptureSessionStateCallback stateCallback = new CameraCaptureSessionStateCallback()
+          .setOnConfigured((session) -> {
+            try {
+              session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
+              Log.d(LOG_TAG, "configuration successful");
+            } catch (CameraAccessException e) {
+              Log.e(LOG_TAG, "Configuration failed: " + e.getMessage());
             }
-          }
-        }
-      };
-
-      reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
-
-      final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
-        @Override
-        public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
-          super.onCaptureCompleted(session, request, result);
-          Toast.makeText(context, "Saved:" + file, Toast.LENGTH_SHORT).show();
-          createCameraPreview();
-        }
-      };
-      cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSessionStateCallback().setOnConfigured((session)->{
-        try {
-          session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
-          Log.d(LOG_TAG, "configuration successful");
-        } catch (CameraAccessException e) {
-          Log.e(LOG_TAG, "Configuration failed: " + e.getMessage());
-        }
-      }), mBackgroundHandler);
+          });
+      cameraDevice.createCaptureSession(outputSurfaces, stateCallback, mBackgroundHandler);
     } catch (CameraAccessException e) {
       Log.e(LOG_TAG, "failed to capture: " + e.getMessage());
     }
-  }
-
-
-  public String getOCRResult(byte[] bytes) {
-//    Log.d(LOG_TAG, api.toString());
-//    api.setImage(file);
-//    api.setImage(bytes, imageDimensions.getWidth(), imageDimensions.getHeight(), 4,4*imageDimensions.getWidth());
-
-    return "";
-//    return api.getUTF8Text();
   }
 
   private void unlockFocus() {
@@ -336,7 +270,6 @@ public class CameraFragment extends Fragment {
     }
   }
 
-
   @Override
   public void onResume() {
     super.onResume();
@@ -352,6 +285,7 @@ public class CameraFragment extends Fragment {
   @Override
   public void onPause() {
     stopBackgroundThread();
+    closeCamera();
     super.onPause();
   }
 
@@ -369,6 +303,17 @@ public class CameraFragment extends Fragment {
       mBackgroundHandler = null;
     } catch (InterruptedException e) {
       e.printStackTrace();
+    }
+  }
+
+  private void closeCamera() {
+    if (null != cameraDevice) {
+      cameraDevice.close();
+      cameraDevice = null;
+    }
+    if (null != reader) {
+      reader.close();
+      reader = null;
     }
   }
 }

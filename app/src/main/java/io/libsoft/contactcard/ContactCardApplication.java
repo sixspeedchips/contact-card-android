@@ -5,7 +5,9 @@ import android.util.Log;
 import com.facebook.stetho.Stetho;
 import com.squareup.picasso.Picasso;
 import io.libsoft.contactcard.service.ContactDatabase;
+import io.libsoft.contactcard.service.FileManagerService;
 import io.libsoft.contactcard.service.GoogleSignInService;
+import io.libsoft.contactcard.service.ImageProcessingService;
 import org.opencv.android.OpenCVLoader;
 
 public class ContactCardApplication extends Application {
@@ -25,6 +27,8 @@ public class ContactCardApplication extends Application {
 
     Stetho.initializeWithDefaults(this);
     GoogleSignInService.setApplicationContext(this);
+    FileManagerService.setApplicationContext(this);
+    ImageProcessingService.setApplicationContext(this);
     Picasso.setSingletonInstance(new Picasso.Builder(this).loggingEnabled(true).build());
     ContactDatabase.setApplicationContext(this);
     ContactDatabase database = ContactDatabase.getInstance();

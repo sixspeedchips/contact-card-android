@@ -15,14 +15,12 @@ public class CameraCaptureListener extends CaptureCallback {
   public void onCaptureCompleted(@NonNull CameraCaptureSession session,
       @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
     super.onCaptureCompleted(session, request, result);
-//    Log.d("KEYS",request.getKeys().toString());
     onCapture.complete();
-//    Log.d(LOG_TAG,result.get(CaptureResult.SENSOR_TIMESTAMP).toString());
-//    result.get()
   }
 
-  public void setOnCompleted(OnCapture onCapture) {
+  public CameraCaptureListener setOnCompleted(OnCapture onCapture) {
     this.onCapture = onCapture;
+    return this;
   }
 
   public interface OnCapture {
