@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 
 public class CameraCaptureListener extends CaptureCallback {
 
-  private final String LOG_TAG = getClass().getSimpleName();
+  private final String TAG = getClass().getSimpleName();
   private OnCapture onCapture;
 
   @Override

@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 
 public class ImageProcessingService {
 
-  private static String LOG_TAG = ImageProcessingService.class.getSimpleName();
+  private static String TAG = ImageProcessingService.class.getSimpleName();
   private static Application applicationContext;
   private static TessBaseAPI api;
 
@@ -41,10 +41,11 @@ public class ImageProcessingService {
   public void cropImage(Image im) {
     ByteBuffer buffer = im.getPlanes()[0].getBuffer();
     byte[] bytes = new byte[buffer.capacity()];
+
     buffer.get(bytes);
   }
 
-  public void doOcr(File file) {
+  public void performOcr(File file) {
     new Thread(() -> {
       api.setImage(file);
       ocrResults.postValue(api.getUTF8Text());

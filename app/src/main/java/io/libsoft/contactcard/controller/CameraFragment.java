@@ -41,7 +41,9 @@ import io.libsoft.contactcard.controller.camera.CameraSurfaceTextureListener;
 import io.libsoft.contactcard.service.FileManagerService;
 import io.libsoft.contactcard.service.ImageProcessingService;
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -59,17 +61,15 @@ public class CameraFragment extends Fragment {
 
   private static final int PERMISSION_GRANTED = PackageManager.PERMISSION_GRANTED;
 
-//  static {
-//    System.loadLibrary("opencv_java");
-//  }
 
   private final int REQUEST_CODE = 1033;
-  private final String LOG_TAG = "camerafragment";
+  private final String TAG = "camerafragment";
 
 
   private Context context;
   private View view;
   private TextureView textureView;
+  private TextureView processedView;
 
   private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -94,7 +94,6 @@ public class CameraFragment extends Fragment {
   private CameraSurfaceTextureListener surfaceTextureListener;
   private FloatingActionButton fab;
   private Surface surface;
-  private File file;
   private CameraCharacteristics characteristics;
   private FileManagerService fileManagerService;
   private ImageReader reader;
@@ -116,6 +115,7 @@ public class CameraFragment extends Fragment {
 
   private void initViews() {
     textureView = view.findViewById(R.id.camera_preview);
+    processedView = view.findViewById(R.id.processed_image);
     fab = view.findViewById(R.id.fab);
   }
 
@@ -126,10 +126,12 @@ public class CameraFragment extends Fragment {
         });
     textureView.setSurfaceTextureListener(surfaceTextureListener);
     stateCallback = new CameraStateCallback((cameraDevice) -> {
-      Log.d(LOG_TAG, "opened");
-      this.cameraDevice = cameraDevice;
-      createCameraPreview();
-    });
+        Log.d(TAG, "opened");
+        this.cameraDevice = cameraDevice;
+        createCameraPreview();
+      },(cameraDevice)->{
+          closeCamera();
+        });
     sessionStateCallback = new CameraCaptureSessionStateCallback();
     sessionStateCallback.setOnConfigured((session) -> {
       if (cameraDevice != null) {
@@ -137,26 +139,28 @@ public class CameraFragment extends Fragment {
         updatePreview();
       }
     });
-    captureListener = new CameraCaptureListener();
-    captureListener.setOnCompleted(() -> {
+
+    captureListener = new CameraCaptureListener().setOnCompleted(() -> {
 
     });
-    fab.setOnClickListener((view) -> {
-      captureImage();
-    });
+
+
+    fab.setOnClickListener(v -> captureImage());
+
     ImageProcessingService.getInstance().getOcrResults().observe(this, (s) -> {
       Toast.makeText(context, s, Toast.LENGTH_LONG).show();
+
+
+      Log.d(TAG, s);
     });
 
   }
 
   private void updatePreview() {
-    Log.d(LOG_TAG, "updating preview");
+    Log.d(TAG, "updating preview");
     if (cameraDevice != null) {
       captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
       try {
-        Log.d(LOG_TAG, "BUILDER: " + captureRequestBuilder.toString());
-        Log.d(LOG_TAG, "SESSION: " + cameraCaptureSession.toString());
         cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(),
             captureListener, mBackgroundHandler);
       } catch (CameraAccessException e) {
@@ -167,13 +171,16 @@ public class CameraFragment extends Fragment {
 
   private void createCameraPreview() {
 
-    SurfaceTexture surfaceTexture = textureView.getSurfaceTexture();
-    surfaceTexture.setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
-    surface = new Surface(surfaceTexture);
+    textureView.getSurfaceTexture().setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
+    processedView.getSurfaceTexture().setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
+    surface = new Surface(textureView.getSurfaceTexture());
+    Surface surface1 = new Surface(processedView.getSurfaceTexture());
     try {
       captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
       captureRequestBuilder.addTarget(surface);
-      cameraDevice.createCaptureSession(Collections.singletonList(surface),
+      captureRequestBuilder.addTarget(surface1);
+
+      cameraDevice.createCaptureSession(Arrays.asList(surface, surface1),
           sessionStateCallback, null);
 
     } catch (CameraAccessException e) {
@@ -184,7 +191,7 @@ public class CameraFragment extends Fragment {
   }
 
   private void openCamera() {
-    Log.d(LOG_TAG, "opening camera");
+    Log.d(TAG, "opening camera");
     try {
       cameraId = manager.getCameraIdList()[0];
       characteristics = manager.getCameraCharacteristics(cameraId);
@@ -212,7 +219,7 @@ public class CameraFragment extends Fragment {
   private void captureImage() {
 
     try {
-      Log.d(LOG_TAG, "Capturing");
+      Log.d(TAG, "Capturing");
       reader = ImageReader.newInstance(imageDimensions.getWidth(),
           imageDimensions.getWidth(), ImageFormat.JPEG, 1);
 
@@ -232,9 +239,12 @@ public class CameraFragment extends Fragment {
 
       CameraImageAvailableListener imageAvailableListener = new CameraImageAvailableListener()
           .setOnCompleted((imageReader) -> {
-            Log.d(LOG_TAG, "Image available");
+            Log.d(TAG, "Image available");
             try (Image image = reader.acquireLatestImage()) {
-              final String saved = fileManagerService.saveImage(image);
+              ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+              byte[] bytes = new byte[buffer.capacity()];
+              buffer.get(bytes);
+              final String saved = fileManagerService.saveImage(bytes);
             }
           });
 
@@ -245,14 +255,14 @@ public class CameraFragment extends Fragment {
           .setOnConfigured((session) -> {
             try {
               session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
-              Log.d(LOG_TAG, "configuration successful");
+              Log.d(TAG, "configuration successful");
             } catch (CameraAccessException e) {
-              Log.e(LOG_TAG, "Configuration failed: " + e.getMessage());
+              Log.e(TAG, "Configuration failed: " + e.getMessage());
             }
           });
       cameraDevice.createCaptureSession(outputSurfaces, stateCallback, mBackgroundHandler);
     } catch (CameraAccessException e) {
-      Log.e(LOG_TAG, "failed to capture: " + e.getMessage());
+      Log.e(TAG, "failed to capture: " + e.getMessage());
     }
   }
 
@@ -273,7 +283,7 @@ public class CameraFragment extends Fragment {
   @Override
   public void onResume() {
     super.onResume();
-    Log.d(LOG_TAG, "starting background thread");
+    Log.d(TAG, "starting background thread");
     startBackgroundThread();
     if (textureView.isAvailable()) {
       openCamera();
@@ -309,11 +319,10 @@ public class CameraFragment extends Fragment {
   private void closeCamera() {
     if (null != cameraDevice) {
       cameraDevice.close();
-      cameraDevice = null;
     }
+
     if (null != reader) {
       reader.close();
-      reader = null;
     }
   }
 }
