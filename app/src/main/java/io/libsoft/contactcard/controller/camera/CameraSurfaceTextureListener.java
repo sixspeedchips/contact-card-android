@@ -3,7 +3,7 @@ package io.libsoft.contactcard.controller.camera;
 import android.graphics.SurfaceTexture;
 import android.view.TextureView.SurfaceTextureListener;
 
-public class CameraSurfaceTextureListener implements SurfaceTextureListener {
+class CameraSurfaceTextureListener implements SurfaceTextureListener {
 
   private OnComplete onComplete;
   private TextureUpdatedListener textureUpdatedListener;

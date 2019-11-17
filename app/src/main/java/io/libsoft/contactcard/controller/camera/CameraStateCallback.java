@@ -4,23 +4,26 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraDevice.StateCallback;
 import androidx.annotation.NonNull;
 
-public class CameraStateCallback extends StateCallback {
+class CameraStateCallback extends StateCallback {
 
 
-  private OnOpened onOpened;
+  private OpenedCompleter onOpened;
+  private ClosedCompleter onClosed;
 
-  public CameraStateCallback(OnOpened onOpened) {
+  public CameraStateCallback(OpenedCompleter onOpened, ClosedCompleter onClosed) {
     this.onOpened = onOpened;
+    this.onClosed = onClosed;
   }
 
   @Override
   public void onOpened(@NonNull CameraDevice camera) {
+
     onOpened.complete(camera);
   }
 
   @Override
   public void onDisconnected(@NonNull CameraDevice camera) {
-
+    onClosed.complete(camera);
   }
 
   @Override
@@ -28,8 +31,12 @@ public class CameraStateCallback extends StateCallback {
 
   }
 
-  public interface OnOpened {
+  public interface OpenedCompleter {
 
+    void complete(CameraDevice cameraDevice);
+  }
+
+  public interface ClosedCompleter {
     void complete(CameraDevice cameraDevice);
   }
 }

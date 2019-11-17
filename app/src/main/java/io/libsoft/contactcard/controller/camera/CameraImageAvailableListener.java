@@ -3,7 +3,7 @@ package io.libsoft.contactcard.controller.camera;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
 
-public class CameraImageAvailableListener implements OnImageAvailableListener {
+class CameraImageAvailableListener implements OnImageAvailableListener {
 
 
   private Completer completer;
