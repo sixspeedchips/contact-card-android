@@ -1,9 +1,11 @@
-package io.libsoft.contactcard.controller;
+package io.libsoft.contactcard.controller.camera;
 
 
 import android.Manifest.permission;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -28,32 +30,20 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import io.libsoft.contactcard.R;
-import io.libsoft.contactcard.controller.camera.CameraCaptureListener;
-import io.libsoft.contactcard.controller.camera.CameraCaptureSessionStateCallback;
-import io.libsoft.contactcard.controller.camera.CameraImageAvailableListener;
-import io.libsoft.contactcard.controller.camera.CameraStateCallback;
-import io.libsoft.contactcard.controller.camera.CameraSurfaceTextureListener;
+import io.libsoft.contactcard.pojo.RectFinder;
 import io.libsoft.contactcard.service.FileManagerService;
 import io.libsoft.contactcard.service.ImageProcessingService;
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
-//import org.bytedeco.leptonica.PIX;
-//
-//import org.bytedeco.leptonica.global.lept;
-//import org.bytedeco.tesseract.TessBaseAPI;
-//import org.bytedeco.javacpp.lept;
-//import org.bytedeco.javacpp.lept.PIX;
-//import org.bytedeco.javacpp.tesseract.TessBaseAPI;
 
 
 public class CameraFragment extends Fragment {
@@ -69,7 +59,7 @@ public class CameraFragment extends Fragment {
   private Context context;
   private View view;
   private TextureView textureView;
-  private TextureView processedView;
+  private ImageView processedView;
 
   private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -126,12 +116,12 @@ public class CameraFragment extends Fragment {
         });
     textureView.setSurfaceTextureListener(surfaceTextureListener);
     stateCallback = new CameraStateCallback((cameraDevice) -> {
-        Log.d(TAG, "opened");
-        this.cameraDevice = cameraDevice;
-        createCameraPreview();
-      },(cameraDevice)->{
-          closeCamera();
-        });
+      Log.d(TAG, "opened");
+      this.cameraDevice = cameraDevice;
+      createCameraPreview();
+    }, (cameraDevice) -> {
+      closeCamera();
+    });
     sessionStateCallback = new CameraCaptureSessionStateCallback();
     sessionStateCallback.setOnConfigured((session) -> {
       if (cameraDevice != null) {
@@ -141,16 +131,25 @@ public class CameraFragment extends Fragment {
     });
 
     captureListener = new CameraCaptureListener().setOnCompleted(() -> {
+      RectFinder square = ImageProcessingService.getInstance().findSquare(textureView.getBitmap());
+      if (square.getRect() != null){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        square.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] bytes = stream.toByteArray();
+        square.getBitmap().recycle();
+        FileManagerService.getInstance().saveImage(bytes,square.getRect().height,square.getRect().width);
+        Intent intent = new Intent();
 
+      } else {
+        getActivity().runOnUiThread(() -> {
+          processedView.setImageBitmap(square.getBitmap());
+        });
+      }
     });
 
-
     fab.setOnClickListener(v -> captureImage());
-
     ImageProcessingService.getInstance().getOcrResults().observe(this, (s) -> {
       Toast.makeText(context, s, Toast.LENGTH_LONG).show();
-
-
       Log.d(TAG, s);
     });
 
@@ -171,16 +170,16 @@ public class CameraFragment extends Fragment {
 
   private void createCameraPreview() {
 
-    textureView.getSurfaceTexture().setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
-    processedView.getSurfaceTexture().setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
+    textureView.getSurfaceTexture()
+        .setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
+//    processedView.getSurfaceTexture().setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
     surface = new Surface(textureView.getSurfaceTexture());
-    Surface surface1 = new Surface(processedView.getSurfaceTexture());
+//    Surface surface1 = new Surface(processedView.getSurfaceTexture());
     try {
       captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
       captureRequestBuilder.addTarget(surface);
-      captureRequestBuilder.addTarget(surface1);
 
-      cameraDevice.createCaptureSession(Arrays.asList(surface, surface1),
+      cameraDevice.createCaptureSession(Arrays.asList(surface),
           sessionStateCallback, null);
 
     } catch (CameraAccessException e) {
@@ -241,10 +240,20 @@ public class CameraFragment extends Fragment {
           .setOnCompleted((imageReader) -> {
             Log.d(TAG, "Image available");
             try (Image image = reader.acquireLatestImage()) {
+
               ByteBuffer buffer = image.getPlanes()[0].getBuffer();
               byte[] bytes = new byte[buffer.capacity()];
               buffer.get(bytes);
-              final String saved = fileManagerService.saveImage(bytes);
+//              ByteBuffer bb = ByteBuffer.allocateDirect(textureView.getBitmap().getAllocationByteCount());
+//              Log.d(TAG, "captureImage: "+height+ " : "+ width);
+//              byte[] b= new byte[bb.capacity()];
+//              textureView.getBitmap().
+//              textureView.getBitmap().copyPixelsToBuffer(bb);
+//              bb.put(b);
+
+              ImageProcessingService.getInstance().cropImage(textureView.getBitmap());
+
+//              fileManagerService.saveImage(bytes, height, width);
             }
           });
 

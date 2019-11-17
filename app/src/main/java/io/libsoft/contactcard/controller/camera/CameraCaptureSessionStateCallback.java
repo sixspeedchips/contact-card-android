@@ -4,7 +4,7 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCaptureSession.StateCallback;
 import androidx.annotation.NonNull;
 
-public class CameraCaptureSessionStateCallback extends StateCallback {
+class CameraCaptureSessionStateCallback extends StateCallback {
 
 
   private Configured configuration;

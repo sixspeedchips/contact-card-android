@@ -11,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 public class FileManagerService {
@@ -39,16 +38,14 @@ public class FileManagerService {
 
 
 
-  public String saveImage(Image image) {
+  public void saveImage(Image image) {
     ByteBuffer buffer = image.getPlanes()[0].getBuffer();
     byte[] bytes = new byte[buffer.capacity()];
     buffer.get(bytes);
-    return saveImage(bytes);
+//    saveImage(bytes);
   }
 
-  public String saveImage(byte[] bytes) {
-
-
+  public void saveImage(byte[] bytes, int height, int width) {
 
       String writeSuccessful = null;
       File dir = new File(APP_PATH + IMAGE_DIRECTORY);
@@ -65,7 +62,10 @@ public class FileManagerService {
       }
       // perform OCR need to move to different service
       ImageProcessingService.getInstance().performOcr(file);
-      return writeSuccessful;
+      // working, saves image with marker on image
+//      ImageProcessingService.getInstance().cropImage(file);
+    // working on reading bytes to mat with opencv
+
     }
 
 
@@ -96,6 +96,14 @@ public class FileManagerService {
       }
 
       return APP_PATH;
+    }
+
+    public File getImageDirectory(){
+      File dir = new File(APP_PATH + IMAGE_DIRECTORY);
+      if (!dir.exists()) {
+        dir.mkdir();
+      }
+      return new File(dir.getAbsolutePath(), String.valueOf(System.currentTimeMillis()));
     }
 
     private static class InstanceHolder {

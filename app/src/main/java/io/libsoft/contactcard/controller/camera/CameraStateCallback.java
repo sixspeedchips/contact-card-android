@@ -4,7 +4,7 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraDevice.StateCallback;
 import androidx.annotation.NonNull;
 
-public class CameraStateCallback extends StateCallback {
+class CameraStateCallback extends StateCallback {
 
 
   private OpenedCompleter onOpened;

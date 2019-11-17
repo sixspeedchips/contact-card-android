@@ -4,22 +4,24 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:id="@+id/camera_screen"
-  tools:context=".controller.CameraFragment"
-  android:background="@android:color/background_dark">
+  tools:context=".controller.camera.CameraFragment"
+  >
 
   <TextureView
     android:id="@+id/camera_preview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:alpha=".5"
+    android:alpha="0"
     />
 
-  <TextureView
-  android:id="@+id/processed_image"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:alpha=".1"
-  />
+  <ImageView
+    android:id="@+id/processed_image"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+  <!--  android:alpha="1"-->
+
+
+
 
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton

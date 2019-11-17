@@ -6,7 +6,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import androidx.annotation.NonNull;
 
-public class CameraCaptureListener extends CaptureCallback {
+class CameraCaptureListener extends CaptureCallback {
 
   private final String TAG = getClass().getSimpleName();
   private OnCapture onCapture;
