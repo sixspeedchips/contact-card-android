@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/camera_navigation"
+  app:startDestination="@id/cameraFragment">
+
+  <fragment
+    android:id="@+id/cameraFragment"
+    android:label="fragment_camera"
+    android:name="io.libsoft.contactcard.controller.camera.CameraFragment"
+    tools:layout="@layout/fragment_camera">
+    <action
+      android:id="@+id/action_cameraFragment_to_imageReviewFragment"
+      app:destination="@id/imageReviewFragment"/>
+  </fragment>
+  <fragment
+    android:id="@+id/imageReviewFragment"
+    android:label="fragment_image_review"
+    android:name="io.libsoft.contactcard.controller.ImageReviewFragment"
+    tools:layout="@layout/fragment_image_review"/>
+</navigation>

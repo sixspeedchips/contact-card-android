@@ -100,6 +100,7 @@ public class ImageProcessingService {
     Imgproc.GaussianBlur(grey, grey, new Size(3,3),.8 );
     Imgproc.Canny(grey, grey,5, 180);
     cropped = mapContours(mat, grey);
+//    cropped = Cropper.of(bitmapFromMat(grey),null,null);
     return cropped;
   }
 

@@ -6,12 +6,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.NavHost;
 import com.google.android.material.navigation.NavigationView;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.controller.camera.CameraFragment;
@@ -22,7 +25,7 @@ import io.libsoft.contactcard.viewmodel.MainViewModel;
 import org.opencv.android.BaseLoaderCallback;
 
 public class MainActivity extends AppCompatActivity
-    implements NavigationView.OnNavigationItemSelectedListener {
+    implements NavigationView.OnNavigationItemSelectedListener, NavHost {
 
   private static final String TAG = "MainActivity";
   private BaseLoaderCallback mLoaderCallback;
@@ -135,6 +138,14 @@ public class MainActivity extends AppCompatActivity
     return true;
   }
 
+  public void swapToImageReview() {
+    ImageReviewFragment imageReviewFragment = new ImageReviewFragment();
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.fragment_container,
+            imageReviewFragment).commit();
+
+  }
+
 
   private void signOut() {
     GoogleSignInService.getInstance().signOut()
@@ -146,4 +157,9 @@ public class MainActivity extends AppCompatActivity
   }
 
 
+  @NonNull
+  @Override
+  public NavController getNavController() {
+    return null;
+  }
 }

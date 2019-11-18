@@ -4,21 +4,18 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:id="@+id/camera_screen"
-  tools:context=".controller.camera.CameraFragment"
-  >
+  tools:context=".controller.camera.CameraFragment">
 
   <TextureView
     android:id="@+id/camera_preview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:alpha="0"
-    />
+    android:alpha="0"/>
 
   <ImageView
     android:id="@+id/processed_image"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>
-  <!--  android:alpha="1"-->
 
 
 
