@@ -33,7 +33,7 @@ import android.widget.ImageView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.navigation.Navigation;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.model.pojo.Cropper;
 import io.libsoft.contactcard.service.FileManagerService;
@@ -42,6 +42,7 @@ import io.libsoft.contactcard.viewmodel.MainViewModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 
 public class CameraFragment extends Fragment {
@@ -51,7 +52,7 @@ public class CameraFragment extends Fragment {
 
 
   private final int REQUEST_CODE = 1033;
-  private final String TAG = "camerafragment";
+  private final String TAG = "CameraFragment";
 
 
   private Context context;
@@ -80,13 +81,12 @@ public class CameraFragment extends Fragment {
   private HandlerThread mBackgroundThread;
   private CameraCaptureListener captureListener;
   private CameraSurfaceTextureListener surfaceTextureListener;
-  private FloatingActionButton fab;
   private Surface surface;
   private CameraCharacteristics characteristics;
   private FileManagerService fileManagerService;
   private ImageReader reader;
   private MainViewModel viewModel;
-
+  private Bitmap latestBmp;
 
 
   @Override
@@ -113,7 +113,6 @@ public class CameraFragment extends Fragment {
   private void initViews() {
     textureView = view.findViewById(R.id.camera_preview);
     processedView = view.findViewById(R.id.processed_image);
-    fab = view.findViewById(R.id.fab);
   }
 
   private void initListeners() {
@@ -128,7 +127,9 @@ public class CameraFragment extends Fragment {
       createCameraPreview();
     }, (cameraDevice) -> {
       closeCamera();
+      this.cameraDevice = null;
     });
+
     sessionStateCallback = new CameraCaptureSessionStateCallback();
     sessionStateCallback.setOnConfigured((session) -> {
       if (cameraDevice != null) {
@@ -137,44 +138,49 @@ public class CameraFragment extends Fragment {
       }
     });
 
+
     captureListener = new CameraCaptureListener().setOnCompleted(() -> {
-      Cropper rectangle = ImageProcessingService.getInstance().findCard(textureView.getBitmap());
-      getActivity().runOnUiThread(() -> {
+      latestBmp = textureView.getBitmap();
+      Cropper rectangle = ImageProcessingService.getInstance().findCard(latestBmp);
+      Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
         processedView.setImageBitmap(rectangle.getOriginal());
       });
     });
+
     ImageProcessingService.getInstance().getCandidates().observe(this,(rects)-> {
-      if (rects.size() > 10) {
-//        ImageReviewFragment imageReviewFragment = new ImageReviewFragment();
-//        getActivity().getSupportFragmentManager().beginTransaction()
-//            .replace(R.id.fragment_container,
-//                imageReviewFragment).commit();
+      if (rects.size() > 5) {
         new Thread(()->{
-          Bitmap bmp = ImageProcessingService.getInstance().getCroppedImage(textureView.getBitmap());
+          Bitmap bmp = ImageProcessingService.getInstance().getCroppedImage(latestBmp);
           FileManagerService.getInstance().saveImage(bmp);
           rects.clear();
         }).start();
 
+        Log.d(TAG, "initListeners: swapping to review image");
+        Navigation.findNavController(view).navigate(R.id.action_cameraFragment_to_contactFragment);
+        Log.d(TAG, "initListeners: navigated");
       }
     });
 
 
   }
 
+
   private void updatePreview() {
-    Log.d(TAG, "updating preview");
+    Log.d(TAG, "updatePreview: start");
     if (cameraDevice != null) {
       captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
       try {
-        cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(),
-            captureListener, mBackgroundHandler);
+        cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), captureListener,
+            mBackgroundHandler);
       } catch (CameraAccessException e) {
         e.printStackTrace();
       }
     }
+    Log.d(TAG, "updatePreview: end");
   }
 
   private void createCameraPreview() {
+    Log.d(TAG, "createCameraPreview: start");
     textureView.getSurfaceTexture()
         .setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
     surface = new Surface(textureView.getSurfaceTexture());
@@ -184,16 +190,16 @@ public class CameraFragment extends Fragment {
 
       cameraDevice.createCaptureSession(Arrays.asList(surface),
           sessionStateCallback, null);
-
+      Log.d(TAG, "createCameraPreview: session active");
     } catch (CameraAccessException e) {
-      e.printStackTrace();
+      Log.e(TAG, "createCameraPreview: " + e.getMessage());
     }
 
 
   }
 
   private void openCamera() {
-    Log.d(TAG, "opening camera");
+    Log.d(TAG, "openCamera: starting");
     try {
       cameraId = manager.getCameraIdList()[0];
       characteristics = manager.getCameraCharacteristics(cameraId);
@@ -214,7 +220,7 @@ public class CameraFragment extends Fragment {
       }
 
     } catch (CameraAccessException e) {
-      e.printStackTrace();
+      Log.e(TAG, "openCamera: " + e.getMessage());
     }
   }
 
@@ -305,8 +311,8 @@ public class CameraFragment extends Fragment {
 
   @Override
   public void onPause() {
-    stopBackgroundThread();
     closeCamera();
+    stopBackgroundThread();
     super.onPause();
     Log.d(TAG, "onPause: ");
   }
@@ -317,6 +323,11 @@ public class CameraFragment extends Fragment {
     Log.d(TAG, "onStop: ");
   }
 
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+  }
+
   private void startBackgroundThread() {
     mBackgroundThread = new HandlerThread("camera_background");
     mBackgroundThread.start();
@@ -325,22 +336,27 @@ public class CameraFragment extends Fragment {
 
   private void stopBackgroundThread() {
     mBackgroundThread.quitSafely();
+
     try {
       mBackgroundThread.join();
       mBackgroundThread = null;
       mBackgroundHandler = null;
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      Log.e(TAG, "stopBackgroundThread: " + e.getMessage());
     }
+  }
+
+  public Bitmap getLatestBmp() {
+    return latestBmp;
   }
 
   private void closeCamera() {
     if (null != cameraDevice) {
       cameraDevice.close();
     }
-
     if (null != reader) {
       reader.close();
     }
   }
+
 }

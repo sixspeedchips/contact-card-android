@@ -5,12 +5,17 @@
   android:layout_height="match_parent"
   tools:context=".controller.ImageReviewFragment">
 
-
-  <ImageView
+  <TextView
     android:id="@+id/review_image"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:text="HERE"
   />
+
+  <!--  <ImageView-->
+  <!--    android:id="@+id/review_image"-->
+  <!--    android:layout_width="match_parent"-->
+  <!--    android:layout_height="match_parent"-->
+  <!--  />-->
 
 </FrameLayout>

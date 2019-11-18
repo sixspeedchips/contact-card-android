@@ -6,17 +6,35 @@
   app:startDestination="@id/cameraFragment">
 
   <fragment
-    android:id="@+id/cameraFragment"
-    android:label="fragment_camera"
-    android:name="io.libsoft.contactcard.controller.camera.CameraFragment"
-    tools:layout="@layout/fragment_camera">
+    android:id="@+id/contactFragment"
+    android:label="fragment_contact"
+    android:name="io.libsoft.contactcard.controller.ContactFragment"
+    tools:layout="@layout/fragment_contact">
     <action
-      android:id="@+id/action_cameraFragment_to_imageReviewFragment"
-      app:destination="@id/imageReviewFragment"/>
+      android:id="@+id/action_contactFragment_to_imageReviewFragment"
+      app:destination="@id/imageReviewFragment"
+      app:popUpTo="@id/contactFragment"/>
+    <action
+      android:id="@+id/action_contactFragment_to_cameraFragment"
+      app:destination="@id/cameraFragment"/>
   </fragment>
   <fragment
     android:id="@+id/imageReviewFragment"
     android:label="fragment_image_review"
     android:name="io.libsoft.contactcard.controller.ImageReviewFragment"
-    tools:layout="@layout/fragment_image_review"/>
+    tools:layout="@layout/fragment_image_review">
+    <action
+      android:id="@+id/action_imageReviewFragment_to_contactFragment"
+      app:destination="@id/contactFragment"
+      app:popUpTo="@id/imageReviewFragment"/>
+  </fragment>
+  <fragment
+    android:id="@+id/cameraFragment"
+    android:name="io.libsoft.contactcard.controller.camera.CameraFragment"
+    android:label="fragment_camera"
+    tools:layout="@layout/fragment_camera">
+    <action
+      android:id="@+id/action_cameraFragment_to_contactFragment"
+      app:destination="@id/contactFragment"/>
+  </fragment>
 </navigation>

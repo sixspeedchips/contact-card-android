@@ -43,14 +43,14 @@ public class FileManagerService {
   }
 
 
-
   public void saveImage(Image image) {
     ByteBuffer buffer = image.getPlanes()[0].getBuffer();
     byte[] bytes = new byte[buffer.capacity()];
     buffer.get(bytes);
+
   }
 
-  public File saveImage(Bitmap bitmap){
+  public File saveImage(Bitmap bitmap) {
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     bitmap.compress(CompressFormat.PNG, 100, stream);
     byte[] bytes = stream.toByteArray();
@@ -60,64 +60,62 @@ public class FileManagerService {
 
   public File saveImage(byte[] bytes) {
 
-      String writeSuccessful = null;
-      File file = getImageDirectory();
-      try (OutputStream output = new FileOutputStream(file)) {
-        output.write(bytes);
-        writeSuccessful = file.getAbsolutePath();
-        vibrator.vibrate(200);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      // perform OCR need to move to different service
+    File file = getImageDirectory();
+    try (OutputStream output = new FileOutputStream(file)) {
+      output.write(bytes);
+      vibrator.vibrate(200);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    // perform OCR need to move to different service
       ImageProcessingService.getInstance().performOcr(file);
-      return file;
-    }
+    return file;
+  }
 
 
-    public String getTessDataPath() {
-      File dir = new File(APP_PATH + "/tessdata/");
-      if (!dir.exists()) {
-        boolean created = dir.mkdir();
-        if (created) {
-          Log.d(TAG, "Created Directory: " + dir.getPath());
-        } else {
-          Log.e(TAG, "Failed to create tessdata folder");
-        }
+  public String getTessDataPath() {
+    File dir = new File(APP_PATH + "/tessdata/");
+    if (!dir.exists()) {
+      boolean created = dir.mkdir();
+      if (created) {
+        Log.d(TAG, "Created Directory: " + dir.getPath());
       } else {
-        File file = new File(APP_PATH + TESS_DATA_FOLDER + "eng.traineddata");
-        if (!file.exists()) {
-          try {
-            InputStream is = applicationContext.getResources().openRawResource(R.raw.eng);
-            byte[] buffer = new byte[is.available()];
-            is.read(buffer);
-            OutputStream outputStream = new FileOutputStream(file);
-            outputStream.write(buffer);
-            Log.d(TAG, "Tessdata written to file: " + file.getAbsolutePath());
-          } catch (IOException e) {
-            Log.e(TAG,
-                "Error writing tessdata to file: " + file.getAbsolutePath() + " " + e.getMessage());
-          }
+        Log.e(TAG, "Failed to create tessdata folder");
+      }
+    } else {
+      File file = new File(APP_PATH + TESS_DATA_FOLDER + "eng.traineddata");
+      if (!file.exists()) {
+        try {
+          InputStream is = applicationContext.getResources().openRawResource(R.raw.eng);
+          byte[] buffer = new byte[is.available()];
+          is.read(buffer);
+          OutputStream outputStream = new FileOutputStream(file);
+          outputStream.write(buffer);
+          Log.d(TAG, "Tessdata written to file: " + file.getAbsolutePath());
+        } catch (IOException e) {
+          Log.e(TAG,
+              "Error writing tessdata to file: " + file.getAbsolutePath() + " " + e.getMessage());
         }
       }
-
-      return APP_PATH;
     }
 
-    public File getImageDirectory(){
-      File dir = new File(APP_PATH + IMAGE_DIRECTORY);
-      if (!dir.exists()) {
-        dir.mkdir();
-      }
-      return new File(dir.getAbsolutePath(), System.currentTimeMillis() + ".png");
-    }
+    return APP_PATH;
+  }
 
+  public File getImageDirectory() {
+    File dir = new File(APP_PATH + IMAGE_DIRECTORY);
+    if (!dir.exists()) {
+      dir.mkdir();
+    }
+    return new File(dir.getAbsolutePath(), System.currentTimeMillis() + ".png");
+  }
 
 
   private static class InstanceHolder {
 
-      private static final FileManagerService INSTANCE = new FileManagerService();
-    }
+    private static final FileManagerService INSTANCE = new FileManagerService();
   }
+}
 
 

@@ -64,25 +64,10 @@ public class MainActivity extends AppCompatActivity
       Toast.makeText(this,s,Toast.LENGTH_LONG).show();
     });
 
-    cameraFragment = new CameraFragment();
-    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cameraFragment)
-        .commit();
-
-
 
   }
 
   private void initListeners() {
-//    imageProcessingService.getCandidates().observe(this, (rects)->{
-//      Log.d(TAG, "initListeners: ");
-//      if (rects.size() > 20){
-//        rects.clear();
-//
-//        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-//            imageReviewFragment).commit();
-//        Log.d(TAG, "initListeners: committing");
-//      }
-//    });
   }
 
 
@@ -138,14 +123,6 @@ public class MainActivity extends AppCompatActivity
     return true;
   }
 
-  public void swapToImageReview() {
-    ImageReviewFragment imageReviewFragment = new ImageReviewFragment();
-    getSupportFragmentManager().beginTransaction()
-        .replace(R.id.fragment_container,
-            imageReviewFragment).commit();
-
-  }
-
 
   private void signOut() {
     GoogleSignInService.getInstance().signOut()
@@ -162,4 +139,5 @@ public class MainActivity extends AppCompatActivity
   public NavController getNavController() {
     return null;
   }
+
 }
