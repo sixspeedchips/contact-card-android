@@ -3,14 +3,16 @@ package io.libsoft.contactcard.service;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.os.CountDownTimer;
 import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.googlecode.tesseract.android.TessBaseAPI;
-import io.libsoft.contactcard.pojo.RectFinder;
+import io.libsoft.contactcard.model.pojo.Cropper;
+import io.reactivex.disposables.CompositeDisposable;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -20,25 +22,35 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 public class ImageProcessingService {
 
-  private static String TAG = ImageProcessingService.class.getSimpleName();
+  private static final double PIXEL_AREA = 5e5;
   private static Application applicationContext;
-  private static TessBaseAPI api;
-
-  static {
-    api = new TessBaseAPI();
-    api.init(FileManagerService.getInstance().getTessDataPath(), "eng");
-  }
+  private String TAG = this.getClass().getSimpleName();
+  private TessBaseAPI api;
+  private Timer timer;
 
   private final MutableLiveData<String> ocrResults;
+  private final MutableLiveData<List<Rect>> candidates;
+
+  private Mat mat;
+  private Mat grey;
+  private Cropper cropped;
+  private final CompositeDisposable pending;
 
 
   public ImageProcessingService() {
+    api = new TessBaseAPI();
+    api.init(FileManagerService.getInstance().getTessDataPath(), "eng");
     ocrResults = new MutableLiveData<>();
+    candidates = new MutableLiveData<>(new ArrayList<>());
+
+    grey = new Mat();
+    mat = new Mat();
+
+    pending = new CompositeDisposable();
   }
 
   public static void setApplicationContext(Application applicationContext) {
@@ -46,6 +58,7 @@ public class ImageProcessingService {
   }
 
   public static ImageProcessingService getInstance() {
+
     return ImageProcessingService.InstanceHolder.INSTANCE;
   }
 
@@ -53,27 +66,24 @@ public class ImageProcessingService {
     return ocrResults;
   }
 
-  public void cropImage(File file) {
-//    ByteBuffer buffer = im.getPlanes()[0].getBuffer();
-//    byte[] bytes = new byte[buffer.capacity()];
-//
-//    buffer.get(bytes);
-    Mat mat = Imgcodecs.imread(file.getAbsolutePath());
-    Log.d(TAG, "cropImage: " + Arrays.toString(mat.get(0, 0)));
-    Imgproc.drawMarker(mat, new Point(100,100),new Scalar(0,0,255), Imgproc.MARKER_DIAMOND,100);
-    Imgcodecs.imwrite(FileManagerService.getInstance().getImageDirectory().toString(),mat);
-  }
+  public Bitmap getCroppedImage(Bitmap bitmap) {
 
-
-
-
-  public void cropImage(Bitmap bitmap){
-
-    Mat mat = new Mat();
-    Utils.bitmapToMat(bitmap.copy(Bitmap.Config.ARGB_8888, true), mat);
-//    Imgcodecs.imwrite(FileManagerService.getInstance().getImageDirectory().toString() + ".png",mat);
+      Rect rect = medianRect();
+      candidates.getValue().clear();
+      Mat saveMat = new Mat();
+      Utils.bitmapToMat(bitmap.copy(Bitmap.Config.ARGB_8888, true), saveMat);
+      Log.d(TAG, "saveCroppedImage: "+ saveMat.empty());
+      Imgproc.rectangle(saveMat, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height),
+          new Scalar(255,0,0,255), 12);
+      Bitmap bm = bitmapFromMat(saveMat, rect);
+      return bm;
 
   }
+
+
+
+
+
 
   public void performOcr(File file) {
     new Thread(() -> {
@@ -83,53 +93,110 @@ public class ImageProcessingService {
     }).start();
   }
 
-  public RectFinder findSquare(Bitmap bitmap) {
-    Mat mat = new Mat();
-    Mat grey = new Mat();
+  public Cropper findCard(Bitmap bitmap) {
+
     Utils.bitmapToMat(bitmap.copy(Bitmap.Config.ARGB_8888, true), mat);
-    Bitmap bmp = Bitmap.createBitmap(mat.cols(), mat.rows(), Config.ARGB_8888);
     Imgproc.cvtColor(mat, grey, Imgproc.COLOR_RGB2GRAY);
     Imgproc.GaussianBlur(grey, grey, new Size(3,3),.8 );
-    Imgproc.Canny(grey, grey,10, 150);
-    Rect rect = mapContours(grey,mat);
-    Utils.matToBitmap(mat,bmp);
-    if (rect != null){
-      Mat sub = mat.submat(rect);
-      bmp = Bitmap.createBitmap(sub.cols(), sub.rows(), Config.ARGB_8888);
-      Utils.matToBitmap(sub,bmp);
-      return RectFinder.of(bmp,rect);
-    } else {
-      return RectFinder.of(bmp, null);
-    }
+    Imgproc.Canny(grey, grey,5, 180);
+    cropped = mapContours(mat, grey);
+    return cropped;
   }
 
-  private Rect mapContours(Mat filtered,Mat mat){
+  private Cropper mapContours(Mat outputMat, Mat filteredMat){
     List<MatOfPoint> contours = new ArrayList<>();
-    Imgproc.findContours(filtered, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+    Imgproc.findContours(filteredMat, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
     for (int i = 0; i < contours.size(); i++) {
       MatOfPoint contour = contours.get(i);
       MatOfPoint2f new_mat = new MatOfPoint2f(contour.toArray());
       int contourSize = (int) contour.total();
       MatOfPoint2f approxCurve_temp = new MatOfPoint2f();
-      Imgproc.approxPolyDP(new_mat, approxCurve_temp, contourSize*.1, true);
+      Imgproc.approxPolyDP(new_mat, approxCurve_temp, contourSize*.2, true);
 
       if (approxCurve_temp.total()==4) {
         MatOfPoint points = new MatOfPoint(approxCurve_temp.toArray());
         Rect rect = Imgproc.boundingRect(points);
-        if (rect.area() > 3e5){
-          Imgproc.rectangle(mat, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height), new Scalar(255,0,0,255), 10);
-          return rect;
+        if (rect.area() > PIXEL_AREA){
+          Imgproc.rectangle(outputMat, new Point(rect.x,rect.y), new Point(rect.x+rect.width,rect.y+rect.height),
+              new Scalar(255,0,0,255), 15);
+          candidates.getValue().add(rect);
+          candidates.postValue(candidates.getValue());
+          Log.d(TAG, "mapContours: rect found");
+          return Cropper.of(bitmapFromMat(outputMat), rect, bitmapFromMat(outputMat,rect));
         }
       }
     }
-
-    return null;
+    return Cropper.of(bitmapFromMat(outputMat), null, null);
   }
+
+  private Bitmap bitmapFromMat(Mat mat, Rect rect){
+    return bitmapFromMat(mat.submat(rect));
+  }
+
+  private Bitmap bitmapFromMat(Mat mat){
+    Bitmap bmp = Bitmap.createBitmap(mat.cols(), mat.rows(), Config.ARGB_8888);
+    Utils.matToBitmap(mat,bmp);
+    return bmp;
+  }
+
+
+  public LiveData<List<Rect>> getCandidates() {
+    return candidates;
+  }
+
+  private Rect medianRect(){
+    int offset = 10;
+    List<Integer> topX = new ArrayList<>();
+    List<Integer> topY = new ArrayList<>();
+    List<Integer> bottomX = new ArrayList<>();
+    List<Integer> bottomY = new ArrayList<>();
+
+    for (Rect rect : candidates.getValue()) {
+      topX.add(rect.x);
+      topY.add(rect.y);
+      bottomX.add(rect.x + rect.width);
+      bottomY.add(rect.y + rect.height);
+    }
+    Collections.sort(topX);
+    Collections.sort(topY);
+    Collections.sort(bottomX);
+    Collections.sort(bottomY);
+    Rect crop = new Rect(new Point(topX.get(topX.size()/2)-offset,topY.get(topY.size()/2)-offset),
+        new Point(bottomX.get(bottomX.size()/2)+offset, bottomY.get(bottomY.size()/2)+offset));
+
+    Log.d(TAG, "medianRect: " + crop.toString());
+    return crop;
+  }
+
+  private static class Timer extends CountDownTimer{
+
+    /**
+     * @param millisInFuture    The number of millis in the future from the call to {@link #start()}
+     *                          until the countdown is done and {@link #onFinish()} is called.
+     * @param countDownInterval The interval along the way to receive {@link #onTick(long)} callbacks.
+     */
+    public Timer(long millisInFuture, long countDownInterval) {
+      super(millisInFuture, countDownInterval);
+    }
+
+    @Override
+    public void onTick(long millisUntilFinished) {
+
+    }
+
+    @Override
+    public void onFinish() {
+
+    }
+  }
+
+
 
 
   private static class InstanceHolder {
 
     private static final ImageProcessingService INSTANCE = new ImageProcessingService();
+
   }
 }

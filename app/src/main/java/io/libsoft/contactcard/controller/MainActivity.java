@@ -2,32 +2,47 @@ package io.libsoft.contactcard.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.navigation.NavigationView;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.controller.camera.CameraFragment;
+import io.libsoft.contactcard.service.FileManagerService;
 import io.libsoft.contactcard.service.GoogleSignInService;
+import io.libsoft.contactcard.service.ImageProcessingService;
+import io.libsoft.contactcard.viewmodel.MainViewModel;
 import org.opencv.android.BaseLoaderCallback;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener {
 
+  private static final String TAG = "MainActivity";
   private BaseLoaderCallback mLoaderCallback;
+  private MainViewModel viewModel;
+  private FileManagerService fileManagerService;
+  private ImageProcessingService imageProcessingService;
+  private CameraFragment cameraFragment;
+  private ImageReviewFragment imageReviewFragment;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    fileManagerService = FileManagerService.getInstance();
+    imageProcessingService = ImageProcessingService.getInstance();
+
     setContentView(R.layout.activity_main);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-
-
 
     DrawerLayout drawer = findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -35,13 +50,42 @@ public class MainActivity extends AppCompatActivity
     drawer.addDrawerListener(toggle);
     toggle.syncState();
 
+    initViewModel();
+    initListeners();
+
     NavigationView navigationView = findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
 
+    ImageProcessingService.getInstance().getOcrResults().observe(this,(s)->{
+      Log.d(TAG, "TEXT" + s);
+      Toast.makeText(this,s,Toast.LENGTH_LONG).show();
+    });
 
-    CameraFragment cameraFragment = new CameraFragment();
-    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,cameraFragment).commit();
+    cameraFragment = new CameraFragment();
+    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cameraFragment)
+        .commit();
 
+
+
+  }
+
+  private void initListeners() {
+//    imageProcessingService.getCandidates().observe(this, (rects)->{
+//      Log.d(TAG, "initListeners: ");
+//      if (rects.size() > 20){
+//        rects.clear();
+//
+//        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+//            imageReviewFragment).commit();
+//        Log.d(TAG, "initListeners: committing");
+//      }
+//    });
+  }
+
+
+  private void initViewModel() {
+    viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+    getLifecycle().addObserver(viewModel);
   }
 
   @Override
@@ -65,14 +109,13 @@ public class MainActivity extends AppCompatActivity
     int id = item.getItemId();
     if (id == R.id.action_settings) {
       return true;
-    } else if (id == R.id.sign_out){
+    } else if (id == R.id.sign_out) {
       signOut();
     }
 
     return super.onOptionsItemSelected(item);
   }
 
-  @SuppressWarnings("StatementWithEmptyBody")
   @Override
   public boolean onNavigationItemSelected(MenuItem item) {
     int id = item.getItemId();

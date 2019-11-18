@@ -2,10 +2,14 @@ package io.libsoft.contactcard.service;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.media.Image;
 import android.os.Vibrator;
 import android.util.Log;
+import androidx.lifecycle.MutableLiveData;
 import io.libsoft.contactcard.R;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,9 +25,11 @@ public class FileManagerService {
   private static String TAG = FileManagerService.class.getSimpleName();
   private static String APP_PATH;
   private static Vibrator vibrator;
+  private MutableLiveData<File> image;
 
   public FileManagerService() {
     vibrator = (Vibrator) applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
+    image = new MutableLiveData<>();
   }
 
   public static void setApplicationContext(Application applicationContext) {
@@ -42,17 +48,20 @@ public class FileManagerService {
     ByteBuffer buffer = image.getPlanes()[0].getBuffer();
     byte[] bytes = new byte[buffer.capacity()];
     buffer.get(bytes);
-//    saveImage(bytes);
   }
 
-  public void saveImage(byte[] bytes, int height, int width) {
+  public File saveImage(Bitmap bitmap){
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    bitmap.compress(CompressFormat.PNG, 100, stream);
+    byte[] bytes = stream.toByteArray();
+    bitmap.recycle();
+    return saveImage(bytes);
+  }
+
+  public File saveImage(byte[] bytes) {
 
       String writeSuccessful = null;
-      File dir = new File(APP_PATH + IMAGE_DIRECTORY);
-      if (!dir.exists()) {
-        dir.mkdir();
-      }
-      File file = new File(dir.getAbsolutePath(), System.currentTimeMillis() + ".jpg");
+      File file = getImageDirectory();
       try (OutputStream output = new FileOutputStream(file)) {
         output.write(bytes);
         writeSuccessful = file.getAbsolutePath();
@@ -62,10 +71,7 @@ public class FileManagerService {
       }
       // perform OCR need to move to different service
       ImageProcessingService.getInstance().performOcr(file);
-      // working, saves image with marker on image
-//      ImageProcessingService.getInstance().cropImage(file);
-    // working on reading bytes to mat with opencv
-
+      return file;
     }
 
 
@@ -103,10 +109,12 @@ public class FileManagerService {
       if (!dir.exists()) {
         dir.mkdir();
       }
-      return new File(dir.getAbsolutePath(), String.valueOf(System.currentTimeMillis()));
+      return new File(dir.getAbsolutePath(), System.currentTimeMillis() + ".png");
     }
 
-    private static class InstanceHolder {
+
+
+  private static class InstanceHolder {
 
       private static final FileManagerService INSTANCE = new FileManagerService();
     }

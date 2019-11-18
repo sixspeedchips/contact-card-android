@@ -3,7 +3,6 @@ package io.libsoft.contactcard.controller.camera;
 
 import android.Manifest.permission;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
@@ -31,16 +30,15 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import io.libsoft.contactcard.R;
-import io.libsoft.contactcard.pojo.RectFinder;
+import io.libsoft.contactcard.model.pojo.Cropper;
 import io.libsoft.contactcard.service.FileManagerService;
 import io.libsoft.contactcard.service.ImageProcessingService;
-import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
+import io.libsoft.contactcard.viewmodel.MainViewModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,6 +85,8 @@ public class CameraFragment extends Fragment {
   private CameraCharacteristics characteristics;
   private FileManagerService fileManagerService;
   private ImageReader reader;
+  private MainViewModel viewModel;
+
 
 
   @Override
@@ -94,13 +94,20 @@ public class CameraFragment extends Fragment {
       Bundle savedInstanceState) {
     context = inflater.getContext();
     view = inflater.inflate(R.layout.fragment_camera, container, false);
+
+
     fileManagerService = FileManagerService.getInstance();
     manager = ((CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE));
 
     initViews();
+    initViewModel();
     initListeners();
-
     return view;
+  }
+
+  private void initViewModel() {
+    viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+    getLifecycle().addObserver(viewModel);
   }
 
   private void initViews() {
@@ -131,27 +138,26 @@ public class CameraFragment extends Fragment {
     });
 
     captureListener = new CameraCaptureListener().setOnCompleted(() -> {
-      RectFinder square = ImageProcessingService.getInstance().findSquare(textureView.getBitmap());
-      if (square.getRect() != null){
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        square.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] bytes = stream.toByteArray();
-        square.getBitmap().recycle();
-        FileManagerService.getInstance().saveImage(bytes,square.getRect().height,square.getRect().width);
-        Intent intent = new Intent();
+      Cropper rectangle = ImageProcessingService.getInstance().findCard(textureView.getBitmap());
+      getActivity().runOnUiThread(() -> {
+        processedView.setImageBitmap(rectangle.getOriginal());
+      });
+    });
+    ImageProcessingService.getInstance().getCandidates().observe(this,(rects)-> {
+      if (rects.size() > 10) {
+//        ImageReviewFragment imageReviewFragment = new ImageReviewFragment();
+//        getActivity().getSupportFragmentManager().beginTransaction()
+//            .replace(R.id.fragment_container,
+//                imageReviewFragment).commit();
+        new Thread(()->{
+          Bitmap bmp = ImageProcessingService.getInstance().getCroppedImage(textureView.getBitmap());
+          FileManagerService.getInstance().saveImage(bmp);
+          rects.clear();
+        }).start();
 
-      } else {
-        getActivity().runOnUiThread(() -> {
-          processedView.setImageBitmap(square.getBitmap());
-        });
       }
     });
 
-    fab.setOnClickListener(v -> captureImage());
-    ImageProcessingService.getInstance().getOcrResults().observe(this, (s) -> {
-      Toast.makeText(context, s, Toast.LENGTH_LONG).show();
-      Log.d(TAG, s);
-    });
 
   }
 
@@ -169,12 +175,9 @@ public class CameraFragment extends Fragment {
   }
 
   private void createCameraPreview() {
-
     textureView.getSurfaceTexture()
         .setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
-//    processedView.getSurfaceTexture().setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
     surface = new Surface(textureView.getSurfaceTexture());
-//    Surface surface1 = new Surface(processedView.getSurfaceTexture());
     try {
       captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
       captureRequestBuilder.addTarget(surface);
@@ -240,10 +243,10 @@ public class CameraFragment extends Fragment {
           .setOnCompleted((imageReader) -> {
             Log.d(TAG, "Image available");
             try (Image image = reader.acquireLatestImage()) {
-
-              ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-              byte[] bytes = new byte[buffer.capacity()];
-              buffer.get(bytes);
+//
+//              ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+//              byte[] bytes = new byte[buffer.capacity()];
+//              buffer.get(bytes);
 //              ByteBuffer bb = ByteBuffer.allocateDirect(textureView.getBitmap().getAllocationByteCount());
 //              Log.d(TAG, "captureImage: "+height+ " : "+ width);
 //              byte[] b= new byte[bb.capacity()];
@@ -251,7 +254,6 @@ public class CameraFragment extends Fragment {
 //              textureView.getBitmap().copyPixelsToBuffer(bb);
 //              bb.put(b);
 
-              ImageProcessingService.getInstance().cropImage(textureView.getBitmap());
 
 //              fileManagerService.saveImage(bytes, height, width);
             }
@@ -306,6 +308,13 @@ public class CameraFragment extends Fragment {
     stopBackgroundThread();
     closeCamera();
     super.onPause();
+    Log.d(TAG, "onPause: ");
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
+    Log.d(TAG, "onStop: ");
   }
 
   private void startBackgroundThread() {
