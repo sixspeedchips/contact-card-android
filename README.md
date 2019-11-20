@@ -54,10 +54,14 @@ Several bugs are currently known.
 * Threads may sometimes not terminate under certain conditions leading to high battery consumption.
 * Sometimes the flag for capturing an image is not tripped and the app is left in a state in which capturing cannot happen. 
 
-### Testing
+### Technical requirements & dependencies
 
-All testing was performed on an Samsung s8+ running android 9. The minimum version set in the build.gradle is Android API 24. 
-
+* All testing was performed on an Samsung s8+ running android 9. The minimum version set in the build.gradle is Android API 24. Device orientation is locked in landscape to prevent issues with image rotation and Tesseract.
+* Libraries:
+    * Open-CV: image processing
+    * Tesseract: OCR 
+* Services:
+    * Google sign-in
 
 ### Links
 * [Usages](docs/usages.md)
