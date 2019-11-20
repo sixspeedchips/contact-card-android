@@ -17,6 +17,9 @@ import androidx.core.app.ActivityCompat;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.service.GoogleSignInService;
 
+/**
+ * Login activity class, handles google sign-in services
+ */
 public class LoginActivity extends AppCompatActivity {
 
   private static final int LOGIN_REQUEST_CODE = 1000;
@@ -24,6 +27,11 @@ public class LoginActivity extends AppCompatActivity {
 
   private GoogleSignInService service;
 
+  /**
+   * On create method, permission are handled here at launch of app.
+   *
+   * @param savedInstanceState
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -54,6 +62,12 @@ public class LoginActivity extends AppCompatActivity {
   }
 
 
+  /**
+   *
+   * @param requestCode
+   * @param resultCode
+   * @param data
+   */
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     if (requestCode == LOGIN_REQUEST_CODE) {

@@ -12,20 +12,34 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-
+/**
+ * Swipe listener for handling swipe gestures on a view.
+ */
 public class OnSwipeTouchListener implements OnTouchListener {
 
   private final GestureDetector gestureDetector;
 
+  /**
+   * Constructor
+   *
+   * @param context context in which swipes are handled.
+   */
   public OnSwipeTouchListener(Context context) {
     gestureDetector = new GestureDetector(context, new GestureListener());
   }
 
+  /**
+   * Override to implement left swipe behaviour.
+   */
   public void onSwipeLeft() {
   }
 
+  /**
+   * Override to implement right swipe behaviour.
+   */
   public void onSwipeRight() {
   }
+
 
   public boolean onTouch(View v, MotionEvent event) {
     return gestureDetector.onTouchEvent(event);

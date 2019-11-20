@@ -9,7 +9,6 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
-import android.os.CountDownTimer;
 import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -44,14 +43,13 @@ public class ImageProcessingService {
   private final CompositeDisposable pending;
   private String TAG = this.getClass().getSimpleName();
   private TessBaseAPI api;
-  private Timer timer;
   private Mat mat;
   private Mat grey;
   private Cropper cropped;
   private Rect medianRect;
 
 
-  public ImageProcessingService() {
+  private ImageProcessingService() {
     api = new TessBaseAPI();
     api.init(FileManagerService.getInstance().getTessDataPath(), "eng");
     ocrResults = new MutableLiveData<>();
@@ -110,9 +108,9 @@ public class ImageProcessingService {
 
 
   /**
-   * Performs Ocr on an image from file
+   * Performs Ocr on an image from file.
    *
-   * @param file {@link File} the file to be read via OCR
+   * @param file {@link File} the file to be read and parsed via OCR
    */
   public void performOcr(File file) {
     new Thread(() -> {
@@ -143,7 +141,12 @@ public class ImageProcessingService {
     return cropped;
   }
 
-
+  /**
+   * Method to parse a file and return its bitmap representation.
+   *
+   * @param file to be loaded.
+   * @return {@link Bitmap} loaded from the file.
+   */
   public Bitmap fileToBitmap(String file) {
     BitmapFactory.Options options = new BitmapFactory.Options();
     options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -227,29 +230,6 @@ public class ImageProcessingService {
 
     Log.d(TAG, "medianRect: " + crop.toString());
     return crop;
-  }
-
-  private static class Timer extends CountDownTimer {
-
-    /**
-     * @param millisInFuture    The number of millis in the future from the call to {@link #start()}
-     *                          until the countdown is done and {@link #onFinish()} is called.
-     * @param countDownInterval The interval along the way to receive {@link #onTick(long)}
-     *                          callbacks.
-     */
-    public Timer(long millisInFuture, long countDownInterval) {
-      super(millisInFuture, countDownInterval);
-    }
-
-    @Override
-    public void onTick(long millisUntilFinished) {
-
-    }
-
-    @Override
-    public void onFinish() {
-
-    }
   }
 
 

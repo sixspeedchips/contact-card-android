@@ -18,8 +18,11 @@ import io.libsoft.contactcard.service.ImageProcessingService;
 import io.reactivex.disposables.CompositeDisposable;
 import java.io.File;
 
-
+/**
+ * Mainviewmodel is currently not being used.
+ */
 public class MainViewModel extends AndroidViewModel implements LifecycleObserver {
+  //TODO clean this class up, removing extraneous references.
 
   private final MutableLiveData<Throwable> throwable;
   private final CompositeDisposable pending;
@@ -37,17 +40,10 @@ public class MainViewModel extends AndroidViewModel implements LifecycleObserver
     image = new MutableLiveData<>();
     account = new MutableLiveData<>();
 
-    initListeners();
 
   }
 
-  private void initListeners() {
 
-  }
-
-  public LiveData<File> getImage() {
-    return image;
-  }
 
 
   /**

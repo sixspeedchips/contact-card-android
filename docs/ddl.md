@@ -49,6 +49,18 @@ CREATE TABLE IF NOT EXISTS `RawText`
 );
 CREATE INDEX IF NOT EXISTS `index_RawText_contact_id` ON `RawText` (`contact_id`);
 CREATE INDEX IF NOT EXISTS `index_RawText_created` ON `RawText` (`created`);
+CREATE TABLE IF NOT EXISTS `FirstName`
+(
+    `name_id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `name`    TEXT
+);
+CREATE INDEX IF NOT EXISTS `index_FirstName_name` ON `FirstName` (`name`);
+CREATE TABLE IF NOT EXISTS `LastName`
+(
+    `name_id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `name`    TEXT
+);
+CREATE INDEX IF NOT EXISTS `index_LastName_name` ON `LastName` (`name`);
 
 ```
 

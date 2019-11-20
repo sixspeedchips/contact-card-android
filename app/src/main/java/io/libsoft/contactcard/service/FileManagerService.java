@@ -28,6 +28,9 @@ import java.util.Map;
 import java.util.Scanner;
 
 
+/**
+ * File manager service class, all file and path requests are handled here
+ */
 public class FileManagerService {
 
   private static final String TESS_DATA_DIRECTORY = "/tessdata/";
@@ -38,21 +41,34 @@ public class FileManagerService {
   private static String APP_PATH;
   private static Vibrator vibrator;
 
-  public FileManagerService() {
+  private FileManagerService() {
     vibrator = (Vibrator) applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
   }
 
+  /**
+   * Sets the context required by any services used by this service.
+   *
+   * @param applicationContext {@link android.content.Context} used for signing in.
+   */
   public static void setApplicationContext(Application applicationContext) {
     FileManagerService.applicationContext = applicationContext;
     APP_PATH = applicationContext.getExternalFilesDir(null).getPath();
   }
 
-
+  /**
+   * Get the singleton instance for the service
+   *
+   * @return FileManagerService instance
+   */
   public static FileManagerService getInstance() {
     return FileManagerService.InstanceHolder.INSTANCE;
   }
 
-
+  /**
+   * Save method which converts {@link Bitmap} into a a file, with the name at the given time.
+   * @param bitmap to be saved
+   * @return {@link File} path the bitmap was saved to.
+   */
   public File saveImage(Bitmap bitmap) {
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     bitmap.compress(CompressFormat.PNG, 100, stream);
@@ -61,6 +77,11 @@ public class FileManagerService {
     return saveImage(bytes);
   }
 
+  /**
+   * Save method which converts {@link byte} array into a a file, with the name at the given time.
+   * @param bytes to be saved into an image.
+   * @return {@link File} path the bytes were saved to.
+   */
   public File saveImage(byte[] bytes) {
 
     File file = getImageDirectory();
@@ -78,7 +99,10 @@ public class FileManagerService {
     return file;
   }
 
-
+  /**
+   * Loader method called at database initialization to load raw data in the database for future use (Pre-load).
+   * @return map containing the List of strings for roughly 100,000 first and last names.
+   */
   public Map<String, List<String>> getNames() {
     Log.d(TAG, "getNames: starting");
     Map<String, List<String>> map = new HashMap<>();
@@ -146,6 +170,11 @@ public class FileManagerService {
 
   }
 
+  /**
+   * Loader method that returns the data path for the tessaract api engine, if the data is not in the tesseract
+   * folder the method will create the folder and save the save the data to a "traineddate.eng" file
+   * @return String path containing the tesseract data folder
+   */
   public String getTessDataPath() {
     File dir = new File(APP_PATH + TESS_DATA_DIRECTORY);
     if (!dir.exists()) {
@@ -173,6 +202,10 @@ public class FileManagerService {
     return APP_PATH;
   }
 
+  /**
+   * Help method to get the image file directory or create it if it doesn't exist.
+   * @return File corresponding to the image directory.
+   */
   public File getImageDirectory() {
     File dir = new File(APP_PATH + IMAGE_DIRECTORY);
     if (!dir.exists()) {

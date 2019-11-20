@@ -1,0 +1,10 @@
+io.libsoft.contactcard
+io.libsoft.contactcard.controller
+io.libsoft.contactcard.controller.camera
+io.libsoft.contactcard.controller.listeners
+io.libsoft.contactcard.model.dao
+io.libsoft.contactcard.model.entity
+io.libsoft.contactcard.model.pojo
+io.libsoft.contactcard.service
+io.libsoft.contactcard.view
+io.libsoft.contactcard.viewmodel

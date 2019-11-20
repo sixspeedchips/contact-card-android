@@ -4,3 +4,5 @@
 * [`ImageDao`](https://github.com/swandivejack/contact-card-android/blob/master/app/src/main/java/io/libsoft/contactcard/model/dao/ImageDao.java)
 * [`RawTextDao`](https://github.com/swandivejack/contact-card-android/blob/master/app/src/main/java/io/libsoft/contactcard/model/dao/RawTextDao.java)
 * [`ProcessedTextDao`](https://github.com/swandivejack/contact-card-android/blob/master/app/src/main/java/io/libsoft/contactcard/model/dao/ProcessedTextDao.java)
+* [`FirstNameDao`](https://github.com/swandivejack/contact-card-android/blob/master/app/src/main/java/io/libsoft/contactcard/model/dao/FirstNameDao.java)
+* [`LastNameDao`](https://github.com/swandivejack/contact-card-android/blob/master/app/src/main/java/io/libsoft/contactcard/model/dao/LastNameDao.java)

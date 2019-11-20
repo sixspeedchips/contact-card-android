@@ -13,9 +13,15 @@
     <activity
       android:label="@string/title_activity_main"
       android:name=".controller.MainActivity"
+      android:screenOrientation="portrait"
       android:theme="@style/AppTheme.NoActionBar">
     </activity>
-    <activity android:name=".controller.LoginActivity">
+    <activity
+      android:name=".controller.LoginActivity"
+      android:screenOrientation="portrait"
+      >
+
+
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

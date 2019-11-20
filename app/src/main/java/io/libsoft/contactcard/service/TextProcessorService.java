@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Text processing class. Names are checked against a database of names. Emails are parsed from the
+ * rawtext via regex patterns. Phone numbers are parsed via regex patterns.
+ */
 public class TextProcessorService {
 
 
@@ -33,7 +37,7 @@ public class TextProcessorService {
   private Matcher matcher;
 
 
-  public TextProcessorService() {
+  private TextProcessorService() {
     vibrator = (Vibrator) applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
     contactHolder = new MutableLiveData<>();
     name = new MutableLiveData<>();
@@ -41,14 +45,28 @@ public class TextProcessorService {
     email = new MutableLiveData<>();
   }
 
+  /**
+   * Set application context
+   * @param applicationContext used for services in this class.
+   */
   public static void setApplicationContext(Application applicationContext) {
     TextProcessorService.applicationContext = applicationContext;
   }
 
+  /**
+   * Singleton pattern getter.
+   * @return the Singleton instance of this class.
+   */
   public static TextProcessorService getInstance() {
     return TextProcessorService.InstanceHolder.INSTANCE;
   }
 
+  /**
+   * Processing function for raw text. Names are matched against a database
+   * of names. Then emails and phones numbers are extracted using regex patterns,
+   * the information is then posted to {@link MutableLiveData} which can be viewed.
+   * @param rawText {@link String} to be parsed.
+   */
   public void process(String rawText) {
 
     new Thread(() -> {
@@ -95,14 +113,26 @@ public class TextProcessorService {
     }).start();
   }
 
+  /**
+   * getter for the mutable live data of a processed name.
+   * @return {@link MutableLiveData} of {@link String} containing a name.
+   */
   public MutableLiveData<String> getName() {
     return name;
   }
 
+  /**
+   * getter for the mutable live data of a processed phone number.
+   * @return {@link MutableLiveData} of {@link String} containing a phone number.
+   */
   public MutableLiveData<String> getPhone() {
     return phone;
   }
 
+  /**
+   * getter for the mutable live data of a processed email.
+   * @return {@link MutableLiveData} of {@link String} containing a email.
+   */
   public MutableLiveData<String> getEmail() {
     return email;
   }

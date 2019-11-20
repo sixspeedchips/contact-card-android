@@ -20,23 +20,34 @@ import io.libsoft.contactcard.service.ImageProcessingService;
 import io.libsoft.contactcard.view.GalleryAdapter.Holder;
 import java.util.List;
 
+/**
+ * Gallery adapter that allows viewing of database images.
+ */
 public class GalleryAdapter extends RecyclerView.Adapter<Holder> {
 
 
   private final Context context;
   private final List<Image> images;
-//  private final OnClickListener clickListener;
-//  private final OnContextListener contextListener;
 
-
+  /**
+   * Constructor for the adapter
+   *
+   * @param context for which events happen under.
+   * @param images  to be displayed.
+   */
   public GalleryAdapter(Context context, List<Image> images) {
     this.context = context;
     this.images = images;
-//    this.clickListener = clickListener;
-//    this.contextListener = contextListener;
   }
 
-
+  /**
+   * Creates and returns a {@link Holder} that can be bound to any {@link
+   * Image} in this instance's list of items.
+   *
+   * @param parent enclosing {@link RecyclerView}.
+   * @param viewType desired view type (ignored in this implementation).
+   * @return {@link Holder} referencing inflated layout.
+   */
   @NonNull
   @Override
   public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -44,17 +55,32 @@ public class GalleryAdapter extends RecyclerView.Adapter<Holder> {
     return new Holder(view);
   }
 
+  /**
+   * Binds the specified {@link Holder} to the {@link Image} at the specified position in this
+   * adapter instance.
+   *
+   * @param holder {@link Holder} referencing a bindable {@link View}.
+   * @param position index of item in the adapter's list to bind to {@code holder}.
+   */
   @Override
   public void onBindViewHolder(@NonNull Holder holder, int position) {
     Image passphrase = images.get(position);
     holder.bind(position, passphrase);
   }
 
+  /**
+   * Returns the number of items in the this instance's list of passphrases.
+   *
+   * @return count.
+   */
   @Override
   public int getItemCount() {
     return images.size();
   }
 
+  /**
+   * Function interface for a long press on a item in the gallery, currently unused.
+   */
   @FunctionalInterface
   public interface OnContextListener {
 
@@ -62,6 +88,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<Holder> {
 
   }
 
+  /**
+   * Binder for {@link View} items in a {@link RecyclerView} and {@link Image} items in a
+   * {@link GalleryAdapter}.
+   */
   public class Holder extends RecyclerView.ViewHolder {
 
     private final View view;
