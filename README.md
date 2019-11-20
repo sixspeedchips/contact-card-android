@@ -56,7 +56,7 @@ Several bugs are currently known.
 
 ### Testing
 
-All testing was performed on an Samsung s8+ running android 9. The minimum version set in the build.gradle is Android API 24. 
+All testing was performed on an SamSung s8+ running android 9. The minimum version set in the build.gradle is Android API 24. 
 
 
 ### Links

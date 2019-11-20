@@ -1,5 +1,5 @@
 
-##Screen Shots
+## Screen Shots
 
 ![Image of camera stream](resources/camera-view.jpg)
 
