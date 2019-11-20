@@ -90,7 +90,6 @@ public class TextProcessorService {
       if (matcher.find()) {
         Log.d(TAG, "process: email address");
         email.postValue(matcher.group(0));
-        email.setValue("");
       }
 
     }).start();
