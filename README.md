@@ -64,8 +64,9 @@ Several bugs are currently known.
     * Google sign-in
 
 ### Links
+* [Documentation](docs/javadocs/index.html)
 * [Usages](docs/usages.md)
-* [Source Code](docs/sources)
+* [Source Code](docs/sources.md)
 * [User Stories](docs/user-stories.md)
 * [Intended Users](docs/intended-users.md)
 * [Entity Relationship Diagrams](docs/erd.md)

@@ -1,13 +1,13 @@
 
-## Screen Shots
+## Screenshots
 
-![Image of camera stream](resources/camera-view.jpg)
-
-
-![Image of cropped output](resources/cropped-image.jpg)
+![camera-ss](resources/camera-view.jpg)
 
 
-![Image of interpreted contact data](resources/contact-output.jpg)
+![camera-ss](resources/cropped-image.jpg)
 
 
-![Image of gallery of Images](resources/gallery.jpg)
+![camera-ss](resources/contact-output.jpg)
+
+
+![camera-ss](resources/gallery.jpg)
