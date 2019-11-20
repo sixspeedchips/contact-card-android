@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener;
@@ -42,6 +41,11 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
   private View view;
 
 
+  /**
+   * On create for main activity
+   *
+   * @param savedInstanceState takes the saved instance state to be loaded.
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -65,12 +69,9 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 
   }
 
-
-  private void initViewModel() {
-    viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-    getLifecycle().addObserver(viewModel);
-  }
-
+  /**
+   * Specifies behaviour for back button in drawer.
+   */
   @Override
   public void onBackPressed() {
     DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -87,6 +88,11 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     return true;
   }
 
+  /**
+   * Navigation within the options menu.
+   * @param item clicked on.
+   * @return boolean behaviour handled.
+   */
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
@@ -109,6 +115,11 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         });
   }
 
+  /**
+   * Navigation within the main activity, switched between the camera and the gallery
+   * @param menuItem that was clicked on
+   * @return boolean the handled state.
+   */
   @Override
   public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
     Log.d(TAG, "onNavigationItemSelected: ");
