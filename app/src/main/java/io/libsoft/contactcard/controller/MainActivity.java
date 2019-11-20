@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,9 +13,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.NavController;
-import androidx.navigation.NavHost;
+import androidx.navigation.Navigation;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.controller.camera.CameraFragment;
 import io.libsoft.contactcard.service.FileManagerService;
@@ -24,16 +24,17 @@ import io.libsoft.contactcard.service.ImageProcessingService;
 import io.libsoft.contactcard.viewmodel.MainViewModel;
 import org.opencv.android.BaseLoaderCallback;
 
-public class MainActivity extends AppCompatActivity
-    implements NavigationView.OnNavigationItemSelectedListener, NavHost {
+public class MainActivity extends AppCompatActivity implements OnNavigationItemSelectedListener {
 
   private static final String TAG = "MainActivity";
+  private final int REQUEST_CODE = 1033;
   private BaseLoaderCallback mLoaderCallback;
   private MainViewModel viewModel;
   private FileManagerService fileManagerService;
   private ImageProcessingService imageProcessingService;
   private CameraFragment cameraFragment;
   private ImageReviewFragment imageReviewFragment;
+  private View view;
 
 
   @Override
@@ -45,30 +46,20 @@ public class MainActivity extends AppCompatActivity
 
     setContentView(R.layout.activity_main);
     Toolbar toolbar = findViewById(R.id.toolbar);
+    view = findViewById(R.id.container_fragment);
     setSupportActionBar(toolbar);
-
     DrawerLayout drawer = findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
         this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
     drawer.addDrawerListener(toggle);
     toggle.syncState();
 
-    initViewModel();
-    initListeners();
-
     NavigationView navigationView = findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
-
-    ImageProcessingService.getInstance().getOcrResults().observe(this,(s)->{
-      Log.d(TAG, "TEXT" + s);
-      Toast.makeText(this,s,Toast.LENGTH_LONG).show();
-    });
-
+    navigationView.bringToFront();
 
   }
 
-  private void initListeners() {
-  }
 
 
   private void initViewModel() {
@@ -104,24 +95,6 @@ public class MainActivity extends AppCompatActivity
     return super.onOptionsItemSelected(item);
   }
 
-  @Override
-  public boolean onNavigationItemSelected(MenuItem item) {
-    int id = item.getItemId();
-
-    if (id == R.id.nav_camera) {
-    } else if (id == R.id.nav_gallery) {
-    } else if (id == R.id.nav_slideshow) {
-    } else if (id == R.id.nav_manage) {
-    } else if (id == R.id.nav_share) {
-
-    } else if (id == R.id.nav_send) {
-
-    }
-
-    DrawerLayout drawer = findViewById(R.id.drawer_layout);
-    drawer.closeDrawer(GravityCompat.START);
-    return true;
-  }
 
 
   private void signOut() {
@@ -133,11 +106,21 @@ public class MainActivity extends AppCompatActivity
         });
   }
 
-
-  @NonNull
   @Override
-  public NavController getNavController() {
-    return null;
-  }
+  public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+    Log.d(TAG, "onNavigationItemSelected: ");
+    int id = menuItem.getItemId();
+    if (id == R.id.nav_camera) {
+      Log.d(TAG, "onNavigationItemSelected: camera selected");
+      Navigation.findNavController(this, R.id.container_fragment).navigate(R.id.nav_camera);
 
+    } else if (id == R.id.nav_gallery) {
+      Log.d(TAG, "onNavigationItemSelected: gallery selected");
+      Navigation.findNavController(view).navigate(R.id.nav_gallery);
+    }
+
+    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+    drawer.closeDrawer(GravityCompat.START);
+    return true;
+  }
 }

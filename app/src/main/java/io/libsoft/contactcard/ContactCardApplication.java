@@ -8,6 +8,7 @@ import io.libsoft.contactcard.service.ContactDatabase;
 import io.libsoft.contactcard.service.FileManagerService;
 import io.libsoft.contactcard.service.GoogleSignInService;
 import io.libsoft.contactcard.service.ImageProcessingService;
+import io.libsoft.contactcard.service.TextProcessorService;
 import org.opencv.android.OpenCVLoader;
 
 public class ContactCardApplication extends Application {
@@ -28,11 +29,17 @@ public class ContactCardApplication extends Application {
     Stetho.initializeWithDefaults(this);
     GoogleSignInService.setApplicationContext(this);
     FileManagerService.setApplicationContext(this);
-    ImageProcessingService.setApplicationContext(this);
-    Picasso.setSingletonInstance(new Picasso.Builder(this).loggingEnabled(true).build());
     ContactDatabase.setApplicationContext(this);
+    ImageProcessingService.setApplicationContext(this);
+    TextProcessorService.setApplicationContext(this);
+
+    Picasso.setSingletonInstance(new Picasso.Builder(this).loggingEnabled(true).build());
+
     ContactDatabase database = ContactDatabase.getInstance();
+
     new Thread(() -> database.getContactDao().delete()).start();
 
   }
+
+
 }

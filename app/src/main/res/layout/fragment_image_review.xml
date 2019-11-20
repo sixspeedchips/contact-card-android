@@ -3,19 +3,14 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context=".controller.ImageReviewFragment">
+  android:background="@android:color/background_dark"
+  tools:context=".controller.ImageReviewFragment"
+  >
 
-  <TextView
+  <ImageView
     android:id="@+id/review_image"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:text="HERE"
   />
-
-  <!--  <ImageView-->
-  <!--    android:id="@+id/review_image"-->
-  <!--    android:layout_width="match_parent"-->
-  <!--    android:layout_height="match_parent"-->
-  <!--  />-->
 
 </FrameLayout>

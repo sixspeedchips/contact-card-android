@@ -31,6 +31,7 @@ public class Image {
   @ColumnInfo(name = "image_url")
   private String Url;
 
+
   @ColumnInfo(name = "raw")
   @NonNull
   private boolean raw;

@@ -1,5 +1,6 @@
 package io.libsoft.contactcard.model.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -13,7 +14,10 @@ public interface ImageDao {
   Long insert(Image image);
 
   @Query("SELECT * FROM image WHERE contact_id=:contactId ORDER BY raw ASC")
-  List<Image> getImagesByContactId(Long contactId);
+  LiveData<List<Image>> getImagesByContactId(Long contactId);
+
+  @Query("SELECT * FROM image ORDER BY image_id ASC")
+  LiveData<List<Image>> getAll();
 
 
 }

@@ -1,21 +1,40 @@
 package io.libsoft.contactcard.controller;
 
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
+import android.Manifest.permission;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.service.GoogleSignInService;
 
 public class LoginActivity extends AppCompatActivity {
 
   private static final int LOGIN_REQUEST_CODE = 1000;
+  private static final int PERMISSIONS_REQUEST_CODE = 1033;
+
   private GoogleSignInService service;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    if (ActivityCompat.checkSelfPermission(this, permission.CAMERA) == PERMISSION_GRANTED
+        && ActivityCompat.checkSelfPermission(this, permission.WRITE_EXTERNAL_STORAGE)
+        == PERMISSION_GRANTED) {
+    } else {
+      ActivityCompat.requestPermissions(this,
+          new String[]{
+              permission.CAMERA,
+              permission.WRITE_EXTERNAL_STORAGE
+          }, PERMISSIONS_REQUEST_CODE);
+    }
+
+
+
     service = GoogleSignInService.getInstance();
     service.refresh()
         .addOnSuccessListener((account) -> {
@@ -27,6 +46,8 @@ public class LoginActivity extends AppCompatActivity {
             service.startSignIn(this, LOGIN_REQUEST_CODE);
           });
         });
+
+
   }
 
 
