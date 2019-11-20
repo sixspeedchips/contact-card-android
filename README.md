@@ -60,7 +60,7 @@ All testing was performed on an Samsung s8+ running android 9. The minimum versi
 
 
 ### Links
-* [Usages](docs/usage.md)
+* [Usages](docs/usages.md)
 * [Source Code](docs/sources)
 * [User Stories](docs/user-stories.md)
 * [Intended Users](docs/intended-users.md)
