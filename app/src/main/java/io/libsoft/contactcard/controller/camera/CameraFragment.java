@@ -1,3 +1,8 @@
+/*****************************************************
+ * This work is Copyright, 2019, Isaac Lindland      *
+ * All rights reserved.                              *
+ *****************************************************/
+
 package io.libsoft.contactcard.controller.camera;
 
 
@@ -21,7 +26,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -48,18 +52,7 @@ public class CameraFragment extends Fragment {
 
 
   private static final int PERMISSION_GRANTED = PackageManager.PERMISSION_GRANTED;
-  private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-
-  static {
-    ORIENTATIONS.append(Surface.ROTATION_0, 90);
-    ORIENTATIONS.append(Surface.ROTATION_90, 0);
-    ORIENTATIONS.append(Surface.ROTATION_180, 270);
-    ORIENTATIONS.append(Surface.ROTATION_270, 180);
-  }
-
   private ExecutorService executor = Executors.newSingleThreadExecutor();
-
-  private final int REQUEST_CODE = 1033;
   private final String TAG = "CameraFragment";
   private Context context;
   private View view;
@@ -225,7 +218,9 @@ public class CameraFragment extends Fragment {
   }
 
 
-
+  /**
+   * Called on fragment resume, initializes thread and starts camera
+   */
   @Override
   public void onResume() {
     super.onResume();
@@ -238,23 +233,15 @@ public class CameraFragment extends Fragment {
     }
   }
 
+  /**
+   * On pause, kills threads and shuts down camera
+   */
   @Override
   public void onPause() {
     closeCamera();
     stopBackgroundThread();
     super.onPause();
     Log.d(TAG, "onPause: ");
-  }
-
-  @Override
-  public void onStop() {
-    super.onStop();
-    Log.d(TAG, "onStop: ");
-  }
-
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
   }
 
   private void startBackgroundThread() {
@@ -273,10 +260,6 @@ public class CameraFragment extends Fragment {
     } catch (InterruptedException e) {
       Log.e(TAG, "stopBackgroundThread: " + e.getMessage());
     }
-  }
-
-  public Bitmap getLatestBmp() {
-    return latestBmp;
   }
 
   private void closeCamera() {

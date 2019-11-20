@@ -1,3 +1,8 @@
+/*****************************************************
+ * This work is Copyright, 2019, Isaac Lindland      *
+ * All rights reserved.                              *
+ *****************************************************/
+
 package io.libsoft.contactcard.controller.camera;
 
 import android.graphics.SurfaceTexture;
@@ -8,12 +13,12 @@ class CameraSurfaceTextureListener implements SurfaceTextureListener {
   private OnComplete onComplete;
   private TextureUpdatedListener textureUpdatedListener;
 
-  public CameraSurfaceTextureListener setOnComplete(OnComplete onComplete) {
+  CameraSurfaceTextureListener setOnComplete(OnComplete onComplete) {
     this.onComplete = onComplete;
     return this;
   }
 
-  public CameraSurfaceTextureListener setTextureUpdatedListener(
+  CameraSurfaceTextureListener setTextureUpdatedListener(
       TextureUpdatedListener textureUpdatedListener) {
     this.textureUpdatedListener = textureUpdatedListener;
     return this;

@@ -1,3 +1,8 @@
+/*****************************************************
+ * This work is Copyright, 2019, Isaac Lindland      *
+ * All rights reserved.                              *
+ *****************************************************/
+
 package io.libsoft.contactcard.service;
 
 import android.app.Activity;
@@ -88,6 +93,7 @@ public class GoogleSignInService {
   }
 
   private static class InstanceHolder {
+
     private static final GoogleSignInService INSTANCE = new GoogleSignInService();
   }
 }

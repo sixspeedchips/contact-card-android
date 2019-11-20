@@ -1,3 +1,8 @@
+/*****************************************************
+ * This work is Copyright, 2019, Isaac Lindland      *
+ * All rights reserved.                              *
+ *****************************************************/
+
 package io.libsoft.contactcard.controller.camera;
 
 import android.media.ImageReader;
@@ -20,7 +25,7 @@ class CameraImageAvailableListener implements OnImageAvailableListener {
   }
 
 
-  public interface Completer {
+  interface Completer {
 
     void complete(ImageReader reader);
   }

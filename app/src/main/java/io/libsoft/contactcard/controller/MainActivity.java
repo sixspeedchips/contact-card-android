@@ -1,3 +1,8 @@
+/*****************************************************
+ * This work is Copyright, 2019, Isaac Lindland      *
+ * All rights reserved.                              *
+ *****************************************************/
+
 package io.libsoft.contactcard.controller;
 
 import android.content.Intent;
@@ -61,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
   }
 
 
-
   private void initViewModel() {
     viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
     getLifecycle().addObserver(viewModel);
@@ -94,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 
     return super.onOptionsItemSelected(item);
   }
-
 
 
   private void signOut() {

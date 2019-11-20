@@ -1,3 +1,8 @@
+/*****************************************************
+ * This work is Copyright, 2019, Isaac Lindland      *
+ * All rights reserved.                              *
+ *****************************************************/
+
 package io.libsoft.contactcard.model.entity;
 
 import androidx.annotation.NonNull;
@@ -48,7 +53,7 @@ public class Contact {
     return created;
   }
 
-    public void setCreated(@NonNull Date created) {
+  public void setCreated(@NonNull Date created) {
     this.created = created;
   }
 

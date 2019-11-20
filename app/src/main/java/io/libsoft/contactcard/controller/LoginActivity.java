@@ -1,3 +1,8 @@
+/*****************************************************
+ * This work is Copyright, 2019, Isaac Lindland      *
+ * All rights reserved.                              *
+ *****************************************************/
+
 package io.libsoft.contactcard.controller;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -32,8 +37,6 @@ public class LoginActivity extends AppCompatActivity {
               permission.WRITE_EXTERNAL_STORAGE
           }, PERMISSIONS_REQUEST_CODE);
     }
-
-
 
     service = GoogleSignInService.getInstance();
     service.refresh()

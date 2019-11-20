@@ -1,3 +1,8 @@
+/*****************************************************
+ * This work is Copyright, 2019, Isaac Lindland      *
+ * All rights reserved.                              *
+ *****************************************************/
+
 package io.libsoft.contactcard.controller.camera;
 
 import android.hardware.camera2.CameraCaptureSession;
@@ -9,7 +14,7 @@ class CameraCaptureSessionStateCallback extends StateCallback {
 
   private Configured configuration;
 
-  public CameraCaptureSessionStateCallback setOnConfigured(Configured configuration) {
+  CameraCaptureSessionStateCallback setOnConfigured(Configured configuration) {
     this.configuration = configuration;
     return this;
   }

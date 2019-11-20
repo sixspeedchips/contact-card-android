@@ -1,3 +1,8 @@
+/*****************************************************
+ * This work is Copyright, 2019, Isaac Lindland      *
+ * All rights reserved.                              *
+ *****************************************************/
+
 package io.libsoft.contactcard.controller.camera;
 
 import android.hardware.camera2.CameraCaptureSession;
@@ -18,12 +23,12 @@ class CameraCaptureListener extends CaptureCallback {
     onCapture.complete();
   }
 
-  public CameraCaptureListener setOnCompleted(OnCapture onCapture) {
+  CameraCaptureListener setOnCompleted(OnCapture onCapture) {
     this.onCapture = onCapture;
     return this;
   }
 
-  public interface OnCapture {
+  interface OnCapture {
 
     void complete();
   }

@@ -1,3 +1,8 @@
+/*****************************************************
+ * This work is Copyright, 2019, Isaac Lindland      *
+ * All rights reserved.                              *
+ *****************************************************/
+
 package io.libsoft.contactcard.controller.camera;
 
 import android.hardware.camera2.CameraDevice;
@@ -10,7 +15,7 @@ class CameraStateCallback extends StateCallback {
   private OpenedCompleter onOpened;
   private ClosedCompleter onClosed;
 
-  public CameraStateCallback(OpenedCompleter onOpened, ClosedCompleter onClosed) {
+  CameraStateCallback(OpenedCompleter onOpened, ClosedCompleter onClosed) {
     this.onOpened = onOpened;
     this.onClosed = onClosed;
   }
@@ -37,6 +42,7 @@ class CameraStateCallback extends StateCallback {
   }
 
   public interface ClosedCompleter {
+
     void complete(CameraDevice cameraDevice);
   }
 }

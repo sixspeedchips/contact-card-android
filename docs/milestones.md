@@ -17,3 +17,4 @@
 * [x] DDL
 * [x] Chrome Inspectability
 
+#### [Third Milestone, November 19](docs/rubric-3.pdf)
