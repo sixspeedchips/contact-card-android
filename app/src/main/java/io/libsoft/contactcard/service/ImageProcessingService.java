@@ -137,7 +137,7 @@ public class ImageProcessingService {
     Imgproc.cvtColor(mat, grey, Imgproc.COLOR_RGB2GRAY);
     Imgproc.GaussianBlur(grey, grey, new Size(3, 3), .8);
     Imgproc.Canny(grey, grey, 50, 100);
-    cropped = mapContours(grey, mat, bound.area() / 20);
+    cropped = mapContours(grey, mat, bound.area() / 30);
 //    cropped = Cropper.of(bitmapFromMat(grey),null,null);
     return cropped;
   }
