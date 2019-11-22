@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -130,13 +131,13 @@ public class ImageProcessingService {
    * @return {@link Cropper} a Cropper, which contains the original Image bitmap, a bounding box, if
    * a card was found and the cropped bitmap image.
    */
-  public Cropper findCard(Bitmap bitmap) {
+  public Cropper findCard(Bitmap bitmap, Size bound) {
 
     Utils.bitmapToMat(bitmap.copy(Bitmap.Config.ARGB_8888, true), mat);
     Imgproc.cvtColor(mat, grey, Imgproc.COLOR_RGB2GRAY);
     Imgproc.GaussianBlur(grey, grey, new Size(3, 3), .8);
     Imgproc.Canny(grey, grey, 50, 100);
-    cropped = mapContours(mat, grey);
+    cropped = mapContours(grey, mat, bound.area() / 20);
 //    cropped = Cropper.of(bitmapFromMat(grey),null,null);
     return cropped;
   }
@@ -153,7 +154,7 @@ public class ImageProcessingService {
     return BitmapFactory.decodeFile(file, options);
   }
 
-  private Cropper mapContours(Mat outputMat, Mat filteredMat) {
+  private Cropper mapContours(Mat filteredMat, Mat outputMat, double bound) {
     List<MatOfPoint> contours = new ArrayList<>();
     Imgproc.findContours(filteredMat, contours, new Mat(), Imgproc.RETR_LIST,
         Imgproc.CHAIN_APPROX_SIMPLE);
@@ -167,7 +168,7 @@ public class ImageProcessingService {
       if (approxCurve_temp.total() >= 4) {
         MatOfPoint points = new MatOfPoint(approxCurve_temp.toArray());
         Rect rect = Imgproc.boundingRect(points);
-        if (rect.area() > PIXEL_AREA) {
+        if (rect.area() > bound) {
           Imgproc.rectangle(outputMat, new Point(rect.x, rect.y),
               new Point(rect.x + rect.width, rect.y + rect.height),
               new Scalar(255, 0, 0, 255), 15);
@@ -232,6 +233,15 @@ public class ImageProcessingService {
     return crop;
   }
 
+
+  /**
+   * Clears the current stack of captured bounding boxes.
+   */
+  public void clear() {
+    Objects.requireNonNull(getCandidates().getValue()).clear();
+    ;
+    Log.d(TAG, "clear: " + getCandidates().getValue().isEmpty());
+  }
 
   private static class InstanceHolder {
 

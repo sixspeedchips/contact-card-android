@@ -70,6 +70,10 @@ public class TextProcessorService {
   public void process(String rawText) {
 
     new Thread(() -> {
+      name.postValue("");
+      phone.postValue("");
+      email.postValue("");
+
       Pattern phonePattern = Pattern.compile(PHONE_EX);
       Pattern emailPattern = Pattern.compile(EMAIL_EX);
       Log.d(TAG, "process: starting");

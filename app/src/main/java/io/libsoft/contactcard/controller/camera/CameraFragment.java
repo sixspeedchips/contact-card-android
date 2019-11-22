@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
-import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -46,6 +45,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.opencv.core.Size;
 
 
 public class CameraFragment extends Fragment {
@@ -130,7 +130,7 @@ public class CameraFragment extends Fragment {
 
     captureListener = new CameraCaptureListener().setOnCompleted(() -> {
       latestBmp = textureView.getBitmap();
-      Cropper rectangle = ImageProcessingService.getInstance().findCard(latestBmp);
+      Cropper rectangle = ImageProcessingService.getInstance().findCard(latestBmp, imageDimensions);
       Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
         processedView.setImageBitmap(rectangle.getOriginal());
       });
@@ -148,9 +148,7 @@ public class CameraFragment extends Fragment {
     captureAvailable = true;
 
     processedView.setOnClickListener((view) -> {
-      Objects.requireNonNull(ImageProcessingService.getInstance().getCandidates().getValue())
-          .clear();
-      ;
+      ImageProcessingService.getInstance().clear();
       captureAvailable = true;
     });
   }
@@ -162,7 +160,6 @@ public class CameraFragment extends Fragment {
     bundle.putString("file", file.toString());
     Navigation.findNavController(view)
         .navigate(R.id.action_cameraFragment_to_imageReviewFragment, bundle);
-
 
   }
 
@@ -183,8 +180,9 @@ public class CameraFragment extends Fragment {
 
   private void createCameraPreview() {
     Log.d(TAG, "createCameraPreview: start");
-    textureView.getSurfaceTexture()
-        .setDefaultBufferSize(imageDimensions.getWidth(), imageDimensions.getHeight());
+    textureView.getSurfaceTexture().setDefaultBufferSize(((int) imageDimensions.width),
+        ((int) imageDimensions.height));
+    Log.d(TAG, "createCameraPreview: imgdimen" + imageDimensions.area());
     surface = new Surface(textureView.getSurfaceTexture());
     try {
       captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
@@ -208,7 +206,8 @@ public class CameraFragment extends Fragment {
       characteristics = manager.getCameraCharacteristics(cameraId);
       StreamConfigurationMap map = characteristics
           .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-      imageDimensions = map.getOutputSizes(SurfaceTexture.class)[0];
+      imageDimensions = new Size(map.getOutputSizes(SurfaceTexture.class)[0].getWidth(),
+          map.getOutputSizes(SurfaceTexture.class)[0].getHeight());
       if (ActivityCompat.checkSelfPermission(context, permission.CAMERA) == PERMISSION_GRANTED) {
         manager.openCamera(cameraId, stateCallback, null);
       }
