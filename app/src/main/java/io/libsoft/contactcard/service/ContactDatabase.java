@@ -81,7 +81,6 @@ public abstract class ContactDatabase extends RoomDatabase {
                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                   Log.d(TAG, "onCreate: STARTING");
                   super.onCreate(db);
-                  Log.d(TAG, "onCreate: after super");
                   new Thread(() -> {
 
                     ContactDatabase database = ContactDatabase.getInstance();

@@ -13,7 +13,6 @@ import androidx.lifecycle.MutableLiveData;
 import io.libsoft.contactcard.model.entity.Contact;
 import io.libsoft.contactcard.model.entity.FirstName;
 import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,15 +81,15 @@ public class TextProcessorService {
       String[] split = rawText.toLowerCase().trim().split("\\s+");
       Log.d(TAG, "process: split length " + split.length);
       Log.d(TAG, "process: split string: " + Arrays.toString(split));
-      List<FirstName> container;
+      FirstName firstName;
 
       for (int i = 0; i < split.length; i++) {
         Log.d(TAG, "process: checking " + split[i]);
-        container = instance.getFirstNameDao().getNameContaining(split[i]);
-        Log.d(TAG, "process: " + container);
-        if (container != null && !container.isEmpty()) {
-          Log.d(TAG, "process: found name " + container.get(0).getName());
-          name.postValue(container.get(0).getName() + " " + split[i + 1].toLowerCase());
+        firstName = instance.getFirstNameDao().getNameContaining(split[i]);
+        Log.d(TAG, "process: " + firstName);
+        if (firstName != null) {
+          Log.d(TAG, "process: found name " + firstName.getName());
+          name.postValue(firstName.getName() + " " + split[i + 1].toLowerCase());
           break;
         }
 

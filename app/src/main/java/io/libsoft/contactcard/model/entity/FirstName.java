@@ -14,7 +14,7 @@ import androidx.room.PrimaryKey;
 public class FirstName {
 
 
-  @ColumnInfo(name = "name_id")
+  @ColumnInfo(name = "id")
   @PrimaryKey(autoGenerate = true)
   private Long id;
 

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "995cf4fd34f9cd97875a30b4ee96fe45",
+    "identityHash": "d749509624ef9649b2bdc5afae8ea225",
     "entities": [
       {
         "tableName": "Contact",
@@ -316,11 +316,11 @@
       },
       {
         "tableName": "FirstName",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name_id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT COLLATE NOCASE)",
         "fields": [
           {
             "fieldPath": "id",
-            "columnName": "name_id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": false
           },
@@ -333,7 +333,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "name_id"
+            "id"
           ],
           "autoGenerate": true
         },
@@ -351,7 +351,7 @@
       },
       {
         "tableName": "LastName",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name_id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name_id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT COLLATE NOCASE)",
         "fields": [
           {
             "fieldPath": "id",
@@ -388,7 +388,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '995cf4fd34f9cd97875a30b4ee96fe45')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd749509624ef9649b2bdc5afae8ea225')"
     ]
   }
 }
