@@ -4,7 +4,8 @@
   android:layout_height="80dp"
   android:padding="1dp"
   android:background="#bfffffff"
-  android:orientation="horizontal">
+  android:orientation="horizontal"
+  >
 
 
   <ImageView xmlns:android="http://schemas.android.com/apk/res/android"

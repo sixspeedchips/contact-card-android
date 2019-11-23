@@ -43,6 +43,7 @@ public class TextProcessorService {
     name = new MutableLiveData<>();
     phone = new MutableLiveData<>();
     email = new MutableLiveData<>();
+    instance = ContactDatabase.getInstance();
   }
 
   /**
@@ -69,22 +70,23 @@ public class TextProcessorService {
    */
   public void process(String rawText) {
 
+    name.postValue("");
+    phone.postValue("");
+    email.postValue("");
+
     new Thread(() -> {
-      name.postValue("");
-      phone.postValue("");
-      email.postValue("");
 
       Pattern phonePattern = Pattern.compile(PHONE_EX);
       Pattern emailPattern = Pattern.compile(EMAIL_EX);
       Log.d(TAG, "process: starting");
-      String[] split = rawText.split("\\s+");
+      String[] split = rawText.toLowerCase().trim().split("\\s+");
+      Log.d(TAG, "process: split length " + split.length);
       Log.d(TAG, "process: split string: " + Arrays.toString(split));
       List<FirstName> container;
 
       for (int i = 0; i < split.length; i++) {
-        instance = ContactDatabase.getInstance();
-        container = instance.getFirstNameDao()
-            .getNameContaining(split[i]);
+        Log.d(TAG, "process: checking " + split[i]);
+        container = instance.getFirstNameDao().getNameContaining(split[i]);
         Log.d(TAG, "process: " + container);
         if (container != null && !container.isEmpty()) {
           Log.d(TAG, "process: found name " + container.get(0).getName());
@@ -98,9 +100,8 @@ public class TextProcessorService {
       if (matcher.find()) {
         Log.d(TAG, "process: found number");
         phone.postValue(matcher.group(0));
-
       } else {
-        String p = rawText.replaceAll("[-.—]*", " ");
+        String p = rawText.replaceAll("[-.—_]+", " ");
         matcher = phonePattern.matcher(p);
         if (matcher.find()) {
           Log.d(TAG, "process: found number");

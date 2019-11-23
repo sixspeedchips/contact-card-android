@@ -41,7 +41,6 @@ public class ContactCardApplication extends Application {
     Picasso.setSingletonInstance(new Picasso.Builder(this).loggingEnabled(true).build());
 
     ContactDatabase database = ContactDatabase.getInstance();
-
     new Thread(() -> database.getContactDao().delete()).start();
 
   }
