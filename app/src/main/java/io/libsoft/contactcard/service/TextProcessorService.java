@@ -6,7 +6,6 @@
 package io.libsoft.contactcard.service;
 
 import android.app.Application;
-import android.content.Context;
 import android.os.Vibrator;
 import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
@@ -37,7 +36,6 @@ public class TextProcessorService {
 
 
   private TextProcessorService() {
-    vibrator = (Vibrator) applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
     contactHolder = new MutableLiveData<>();
     name = new MutableLiveData<>();
     phone = new MutableLiveData<>();
@@ -95,11 +93,7 @@ public class TextProcessorService {
 
       }
 
-      matcher = phonePattern.matcher(rawText);
-      if (matcher.find()) {
-        Log.d(TAG, "process: found number");
-        phone.postValue(matcher.group(0));
-      } else {
+
         String p = rawText.replaceAll("[-.—_]+", " ");
         matcher = phonePattern.matcher(p);
         if (matcher.find()) {
@@ -107,7 +101,6 @@ public class TextProcessorService {
           phone.postValue(matcher.group(0));
         }
 
-      }
       matcher = emailPattern.matcher(rawText);
       if (matcher.find()) {
         Log.d(TAG, "process: email address");

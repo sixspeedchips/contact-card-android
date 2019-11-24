@@ -9,6 +9,7 @@ package io.libsoft.contactcard.controller;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,8 +21,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.controller.listeners.OnSwipeTouchListener;
+import io.libsoft.contactcard.service.FileManagerService;
 import io.libsoft.contactcard.service.ImageProcessingService;
-import java.io.File;
 
 public class ImageReviewFragment extends Fragment {
 
@@ -32,6 +33,7 @@ public class ImageReviewFragment extends Fragment {
   private Context context;
   private ImageView imageView;
   private String file;
+  private Bitmap bmp;
 
 
   @SuppressLint("ClickableViewAccessibility")
@@ -44,9 +46,11 @@ public class ImageReviewFragment extends Fragment {
     imageView = view.findViewById(R.id.review_image);
 
     if (getArguments() != null) {
-      file = getArguments().getString("file");
-      Bitmap bitmap = ImageProcessingService.getInstance().fileToBitmap(file);
-      imageView.setImageBitmap(bitmap);
+//      file = getArguments().getString("file");
+//      Bitmap bitmap = ImageProcessingService.getInstance().fileToBitmap(file);
+      byte[] byteArray = getArguments().getByteArray("image");
+      bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+      imageView.setImageBitmap(bmp);
     }
     imageView.setOnTouchListener(new OnSwipeTouchListener(context) {
 
@@ -56,12 +60,12 @@ public class ImageReviewFragment extends Fragment {
       }
 
       public void onSwipeLeft() {
-        if (file != null) {
-          Bundle extras = new Bundle();
-          ImageProcessingService.getInstance().performOcr(new File(file));
-
+        if (bmp != null) {
           Navigation.findNavController(view)
-              .navigate(R.id.action_imageReviewFragment_to_contactFragment, extras);
+              .navigate(R.id.action_imageReviewFragment_to_contactFragment);
+          new Thread(()->{
+            ImageProcessingService.getInstance().performOcr(FileManagerService.getInstance().saveImage(bmp));
+          }).start();
         }
       }
 

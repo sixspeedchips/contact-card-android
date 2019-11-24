@@ -9,6 +9,7 @@ package io.libsoft.contactcard.controller;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,11 +44,16 @@ public class ContactFragment extends Fragment {
     EditText name = view.findViewById(R.id.parsed_name);
     EditText phone = view.findViewById(R.id.parsed_phone);
     EditText email = view.findViewById(R.id.parsed_email);
-    ImageProcessingService.getInstance().getOcrResults().observe(this, textView::setText);
+    ImageProcessingService.getInstance().getOcrResults().observe(this, (s)->{
+      textView.setText(s);
+      if (s!=""){
+        ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(200);
+      }
+    });
     TextProcessorService.getInstance().getName().observe(this, name::setText);
     TextProcessorService.getInstance().getPhone().observe(this, phone::setText);
     TextProcessorService.getInstance().getEmail().observe(this, email::setText);
-    textView.setOnTouchListener(new OnSwipeTouchListener(context) {
+    view.setOnTouchListener(new OnSwipeTouchListener(context) {
       public void onSwipeRight() {
 
       }

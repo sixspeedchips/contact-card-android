@@ -6,10 +6,8 @@
 package io.libsoft.contactcard.service;
 
 import android.app.Application;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.os.Vibrator;
 import android.util.Log;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.model.entity.Image;
@@ -39,10 +37,8 @@ public class FileManagerService {
   private static Application applicationContext;
   private static String TAG = "FileManagerService";
   private static String APP_PATH;
-  private static Vibrator vibrator;
 
   private FileManagerService() {
-    vibrator = (Vibrator) applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
   }
 
   /**
@@ -91,7 +87,6 @@ public class FileManagerService {
       image.setRaw(false);
       image.setUrl(file.getAbsolutePath());
       ContactDatabase.getInstance().getImageDao().insert(image);
-      vibrator.vibrate(200);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -161,11 +156,11 @@ public class FileManagerService {
       Log.e(TAG, "parseName: " + e.getMessage());
     }
     Scanner scanner = new Scanner(fr);
-    scanner.useDelimiter("\n");
+    scanner.useDelimiter("\r");
     while (scanner.hasNext()) {
       strings.add(scanner.next().toLowerCase());
     }
-    System.out.println(strings);
+//    System.out.println(strings);
     return strings;
 
   }
