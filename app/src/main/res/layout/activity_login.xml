@@ -5,7 +5,9 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  android:background="@drawable/login_background"
   tools:context=".controller.LoginActivity">
+
   <com.google.android.gms.common.SignInButton
     android:id="@+id/sign_in"
     android:layout_width="wrap_content"

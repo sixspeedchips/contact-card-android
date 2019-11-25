@@ -34,6 +34,7 @@ public class ImageReviewFragment extends Fragment {
   private ImageView imageView;
   private String file;
   private Bitmap bmp;
+  private byte[] byteArray;
 
 
   @SuppressLint("ClickableViewAccessibility")
@@ -46,9 +47,7 @@ public class ImageReviewFragment extends Fragment {
     imageView = view.findViewById(R.id.review_image);
 
     if (getArguments() != null) {
-//      file = getArguments().getString("file");
-//      Bitmap bitmap = ImageProcessingService.getInstance().fileToBitmap(file);
-      byte[] byteArray = getArguments().getByteArray("image");
+      byteArray = getArguments().getByteArray("image");
       bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
       imageView.setImageBitmap(bmp);
     }

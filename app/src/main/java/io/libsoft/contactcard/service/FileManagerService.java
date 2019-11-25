@@ -9,6 +9,8 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.util.Log;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.model.entity.Image;
 import java.io.ByteArrayOutputStream;
@@ -37,8 +39,10 @@ public class FileManagerService {
   private static Application applicationContext;
   private static String TAG = "FileManagerService";
   private static String APP_PATH;
+  private MutableLiveData<File> fileData;
 
   private FileManagerService() {
+    fileData = new MutableLiveData<>();
   }
 
   /**
@@ -58,6 +62,10 @@ public class FileManagerService {
    */
   public static FileManagerService getInstance() {
     return FileManagerService.InstanceHolder.INSTANCE;
+  }
+
+  public LiveData<File> getFileData() {
+    return fileData;
   }
 
   /**
@@ -80,17 +88,17 @@ public class FileManagerService {
    */
   public File saveImage(byte[] bytes) {
 
-    File file = getImageDirectory();
+    File file = getImagePath();
     try (OutputStream output = new FileOutputStream(file)) {
       output.write(bytes);
       Image image = new Image();
       image.setRaw(false);
       image.setUrl(file.getAbsolutePath());
       ContactDatabase.getInstance().getImageDao().insert(image);
+      fileData.postValue(file);
     } catch (IOException e) {
       e.printStackTrace();
     }
-
     return file;
   }
 
@@ -160,7 +168,6 @@ public class FileManagerService {
     while (scanner.hasNext()) {
       strings.add(scanner.next().toLowerCase());
     }
-//    System.out.println(strings);
     return strings;
 
   }
@@ -201,12 +208,16 @@ public class FileManagerService {
    * Help method to get the image file directory or create it if it doesn't exist.
    * @return File corresponding to the image directory.
    */
-  public File getImageDirectory() {
+  public File getImagePath() {
     File dir = new File(APP_PATH + IMAGE_DIRECTORY);
     if (!dir.exists()) {
       dir.mkdir();
     }
     return new File(dir.getAbsolutePath(), System.currentTimeMillis() + ".png");
+  }
+
+  public void reset() {
+    fileData.setValue(null);
   }
 
   private static class InstanceHolder {

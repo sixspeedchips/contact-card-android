@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
-  android:layout_height="80dp"
+  android:layout_height="165dp"
   android:padding="1dp"
   android:background="#bfffffff"
   android:orientation="horizontal"
@@ -12,9 +12,9 @@
     android:id="@+id/gallery_image"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="1dp"
+    android:padding="2dp"
 
-    android:background="#8fffffff"
+    android:background="@color/colorAccent"
     android:orientation="vertical"
     />
 </LinearLayout>

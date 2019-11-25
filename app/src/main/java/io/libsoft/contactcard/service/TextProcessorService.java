@@ -6,6 +6,7 @@
 package io.libsoft.contactcard.service;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Vibrator;
 import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
@@ -67,10 +68,6 @@ public class TextProcessorService {
    */
   public void process(String rawText) {
 
-    name.postValue("");
-    phone.postValue("");
-    email.postValue("");
-
     new Thread(() -> {
 
       Pattern phonePattern = Pattern.compile(PHONE_EX);
@@ -106,6 +103,7 @@ public class TextProcessorService {
         Log.d(TAG, "process: email address");
         email.postValue(matcher.group(0));
       }
+      ((Vibrator) applicationContext.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(200);
 
     }).start();
   }
@@ -132,6 +130,12 @@ public class TextProcessorService {
    */
   public MutableLiveData<String> getEmail() {
     return email;
+  }
+
+  public void reset() {
+    name.setValue("");
+    email.setValue("");
+    phone.setValue("");
   }
 
   private static class InstanceHolder {
