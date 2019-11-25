@@ -1,0 +1,10 @@
+-bootclasspath /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar:/opt/android/sdk/platforms/android-24/android.jar
+-link https://docs.oracle.com/javase/8/docs/api/
+-link https://rmtheis.github.io/tess-two/javadoc/index.html
+-link https://square.github.io/picasso/2.x/picasso/
+-link http://reactivex.io/RxJava/javadoc/
+-link https://github.com/quickbirdstudios/opencv-android
+-linkoffline http://developer.android.com/reference/ /opt/android/sdk/docs/reference
+-windowtitle "Contact Card"
+
+-bootclasspath /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar:/opt/android/sdk/platforms/android-24/android.jar -link https://docs.oracle.com/javase/8/docs/api/ -link https://rmtheis.github.io/tess-two/javadoc/index.html -link https://square.github.io/picasso/2.x/picasso/ -link http://reactivex.io/RxJava/javadoc/ -link https://github.com/quickbirdstudios/opencv-android -linkoffline http://developer.android.com/reference/ /opt/android/sdk/docs/reference -windowtitle "Contact Card"

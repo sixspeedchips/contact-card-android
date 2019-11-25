@@ -11,9 +11,6 @@ This project is intended to provide an easy method for people to store the busin
 
 Currently the functionality of the app is as follows, when the app is launched for the first time there are several data preloads that happen, one, the training data is stored on the machine and loaded, and the database is populated with a list of first and last names. Given this, it then launches immediately into a camera. From the Camera the app attempts to find any card matching a rectangular area by performing several image processing functions using open-cv function. An approximation is performed to determine the a bounding box for the image and then the image is cropped and saved. When the image is saved the app swaps to a review, so that the user may review their capture, if it is unsatisfactory they may swipe left and attempt another capture. If the capture is likely to yield positive results the user may swipe right to then process the image. Processing happens first by feeding the image into the tesseract engine which yields a string interpretation of the text in the image. These results are then fed into a parsing algorithm which then attemps to pull out the name, the phone number and the email in the text. These results are display on the screen in edit boxes which the user may change to fix as poor results. 
 
-
-
-
 ## Future Goals
 
 Future goals include:
@@ -28,23 +25,17 @@ Future goals include:
 ## Requirements
 
 * Java 8
-* Android SDK build minimum 24
-
+* Android SDK build minimum 24.
+* An android phone with decent specs to handle the image processing.
 
 ## Build Instructions
 
 1. Clone the repository:
-
 	`git clone git@github.com:swandivejack/contact-card-android.git`
-
 2. Using an IDE such as intellij import the project.
-
 3. Go to [google dev console](https://console.developers.google.com/). Create a new project and add an Oauth key. From intellij, in the gradle tab->app->tasks->android->signing report, get the sha-1 and then copy the base package name of the project into the oathkey fields in google.
 4. Build the gradle file.
-
 5. Add an android app run configuration and run the app. 
-
-
 
 
 ### Bugs
@@ -60,11 +51,13 @@ Several bugs are currently known.
 * Libraries:
     * Open-CV: image processing
     * Tesseract: OCR 
+    * Picasso to facilitate image loading and caching
 * Services:
     * Google sign-in
 
 ### Links
 * [Documentation](docs/javadocs/index.html)
+* [Licenses](docs/licenses/license.info)
 * [Usages](docs/usages.md)
 * [Source Code](docs/sources.md)
 * [User Stories](docs/user-stories.md)
