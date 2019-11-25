@@ -9,7 +9,7 @@
     android:id="@+id/nav_contact"
     android:label="fragment_contact"
     android:name="io.libsoft.contactcard.controller.ContactFragment"
-    tools:layout="@layout/fragment_contact_3">
+    tools:layout="@layout/fragment_contact">
     <action
       android:id="@+id/action_contactFragment_to_cameraFragment"
       app:destination="@id/nav_camera"
@@ -51,4 +51,9 @@
     android:label="fragment_gallery"
     android:name="io.libsoft.contactcard.controller.GalleryFragment"
     tools:layout="@layout/fragment_gallery"/>
+  <fragment
+    android:id="@+id/nav_license"
+    android:label="fragment_license"
+    android:name="io.libsoft.contactcard.service.LicenseFragment"
+    tools:layout="@layout/fragment_license"/>
 </navigation>

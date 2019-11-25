@@ -122,8 +122,7 @@ public class FileManagerService {
     File file = new File(APP_PATH + NAMES_DIRECTORY + "names_first.txt");
 
     if (!file.exists()) {
-      try {
-        InputStream is = applicationContext.getResources().openRawResource(R.raw.names_first);
+      try (InputStream is = applicationContext.getResources().openRawResource(R.raw.names_first)) {
         byte[] buffer = new byte[is.available()];
         is.read(buffer);
         OutputStream outputStream = new FileOutputStream(file);
@@ -138,8 +137,7 @@ public class FileManagerService {
     file = new File(APP_PATH + NAMES_DIRECTORY + "names_last.txt");
 
     if (!file.exists()) {
-      try {
-        InputStream is = applicationContext.getResources().openRawResource(R.raw.names_last);
+      try (InputStream is = applicationContext.getResources().openRawResource(R.raw.names_last)) {
         byte[] buffer = new byte[is.available()];
         is.read(buffer);
         OutputStream outputStream = new FileOutputStream(file);
@@ -216,6 +214,9 @@ public class FileManagerService {
     return new File(dir.getAbsolutePath(), System.currentTimeMillis() + ".png");
   }
 
+  /**
+   * resets the currently observed file.
+   */
   public void reset() {
     fileData.setValue(null);
   }

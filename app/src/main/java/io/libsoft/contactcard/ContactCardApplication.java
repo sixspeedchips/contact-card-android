@@ -16,6 +16,9 @@ import io.libsoft.contactcard.service.ImageProcessingService;
 import io.libsoft.contactcard.service.TextProcessorService;
 import org.opencv.android.OpenCVLoader;
 
+/**
+ * Entry point of application.
+ */
 public class ContactCardApplication extends Application {
 
   static {
@@ -27,6 +30,9 @@ public class ContactCardApplication extends Application {
   }
 
 
+  /**
+   * On create handling the setting of contexts for the services.
+   */
   @Override
   public void onCreate() {
     super.onCreate();

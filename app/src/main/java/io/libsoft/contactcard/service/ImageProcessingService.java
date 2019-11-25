@@ -208,7 +208,7 @@ public class ImageProcessingService {
   }
 
   private Rect medianRect() {
-    int offset = 10;
+    int offset = 5;
     List<Integer> topX = new ArrayList<>();
     List<Integer> topY = new ArrayList<>();
     List<Integer> bottomX = new ArrayList<>();
@@ -239,7 +239,6 @@ public class ImageProcessingService {
    */
   public void clear() {
     Objects.requireNonNull(getCandidates().getValue()).clear();
-    ;
     Log.d(TAG, "clear: " + getCandidates().getValue().isEmpty());
   }
 
