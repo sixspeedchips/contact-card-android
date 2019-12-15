@@ -14,12 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import com.squareup.picasso.Picasso;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.controller.listeners.OnSwipeTouchListener;
-import io.libsoft.contactcard.service.ImageProcessingService;
+import io.libsoft.contactcard.service.FileManagerService;
 import io.libsoft.contactcard.service.TextProcessorService;
 
 
@@ -32,6 +33,10 @@ public class ContactFragment extends Fragment {
   private static final String TAG = "ContactFragment";
   private Context context;
   private View view;
+  private ImageView imageView;
+  private EditText name;
+  private EditText phone;
+  private EditText email;
 
   @SuppressLint("ClickableViewAccessibility")
   @Override
@@ -39,33 +44,47 @@ public class ContactFragment extends Fragment {
       Bundle savedInstanceState) {
     view = inflater.inflate(R.layout.fragment_contact, container, false);
     context = inflater.getContext();
-    TextView textView = view.findViewById(R.id.raw_text);
-    EditText name = view.findViewById(R.id.parsed_name);
-    EditText phone = view.findViewById(R.id.parsed_phone);
-    EditText email = view.findViewById(R.id.parsed_email);
-    ImageProcessingService.getInstance().getOcrResults().observe(this, textView::setText);
+
+    initViews();
+    initListeners();
+
+    return view;
+  }
+
+  private void initViews() {
+    imageView = view.findViewById(R.id.image_review);
+    name = view.findViewById(R.id.parsed_name);
+    phone = view.findViewById(R.id.parsed_phone);
+    email = view.findViewById(R.id.parsed_email);
+  }
+
+  private void initListeners() {
+
+    FileManagerService.getInstance().getFileData().observe(this, (file) -> {
+      Log.d(TAG, "initListeners: " + file);
+      Log.d(TAG, "initListeners: " + imageView);
+      if (file != null) {
+        Picasso.get().load(file).into(imageView);
+      }
+    });
     TextProcessorService.getInstance().getName().observe(this, name::setText);
     TextProcessorService.getInstance().getPhone().observe(this, phone::setText);
     TextProcessorService.getInstance().getEmail().observe(this, email::setText);
-    textView.setOnTouchListener(new OnSwipeTouchListener(context) {
+    view.setOnTouchListener(new OnSwipeTouchListener(context) {
       public void onSwipeRight() {
 
       }
 
       public void onSwipeLeft() {
         Log.d(TAG, "onSwipeLeft: ");
-
-        phone.setText("");
-        email.setText("");
-        name.setText("");
+        TextProcessorService.getInstance().reset();
+        FileManagerService.getInstance().reset();
         Navigation.findNavController(view)
             .navigate(R.id.action_contactFragment_to_cameraFragment);
       }
 
 
     });
-
-    return view;
   }
 
 }

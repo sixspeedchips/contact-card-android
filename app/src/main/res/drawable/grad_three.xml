@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ This work is Copyright, 2019, Isaac Lindland     ~
+  ~ All rights reserved.                             ~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item>
+    <shape xmlns:android="http://schemas.android.com/apk/res/android"
+      android:shape="rectangle">
+      <gradient
+        android:angle="360"
+        android:centerColor="#9B99DAFF"
+        android:centerX="15%"
+        android:endColor="#FF008080"
+        android:startColor="#8C99DAFF"
+        android:type="linear"/>
+    </shape>
+  </item>
+  <item>
+    <shape xmlns:android="http://schemas.android.com/apk/res/android"
+      android:shape="rectangle">
+      <gradient
+        android:centerColor="#9B99DAFF"
+        android:centerX="50%"
+        android:centerY="50%"
+        android:endColor="#FF008080"
+        android:gradientRadius="15"
+        android:startColor="#8C99DAFF"
+        android:type="radial"/>
+    </shape>
+  </item>
+
+</layer-list>

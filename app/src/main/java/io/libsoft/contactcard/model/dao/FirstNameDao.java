@@ -36,10 +36,10 @@ public interface FirstNameDao {
 
   /**
    * Search string to look up a name in the database.
-   * @param arg
+   * @param name
    * @return {@link List<FirstName>}
    */
-  @Query("SELECT * FROM firstname WHERE name=:arg")
-  List<FirstName> getNameContaining(String arg);
+  @Query("SELECT * FROM firstname WHERE name=:name")
+  FirstName getNameContaining(String name);
 
 }

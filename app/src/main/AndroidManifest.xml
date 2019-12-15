@@ -9,19 +9,17 @@
     android:name=".ContactCardApplication"
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
-    android:theme="@style/AppTheme">
+    android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
     <activity
       android:label="@string/title_activity_main"
       android:name=".controller.MainActivity"
       android:screenOrientation="portrait"
-      android:theme="@style/AppTheme.NoActionBar">
+      android:theme="@style/AppTheme.NoActionBar"
+      >
     </activity>
     <activity
       android:name=".controller.LoginActivity"
-      android:screenOrientation="portrait"
-      >
-
-
+      android:screenOrientation="portrait">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

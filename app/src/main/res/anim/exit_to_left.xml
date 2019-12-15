@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ This work is Copyright, 2019, Isaac Lindland     ~
+  ~ All rights reserved.                             ~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+  android:shareInterpolator="false"
+  android:duration="@android:integer/config_shortAnimTime"
+  >
+  <translate
+    android:fromXDelta="0%"
+    android:toXDelta="-100%"
+    />
+
+</set>

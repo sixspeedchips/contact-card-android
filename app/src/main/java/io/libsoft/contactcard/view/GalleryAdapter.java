@@ -6,7 +6,6 @@
 package io.libsoft.contactcard.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -14,10 +13,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.squareup.picasso.Picasso;
 import io.libsoft.contactcard.R;
 import io.libsoft.contactcard.model.entity.Image;
-import io.libsoft.contactcard.service.ImageProcessingService;
 import io.libsoft.contactcard.view.GalleryAdapter.Holder;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -102,9 +102,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<Holder> {
     }
 
     private void bind(int position, Image image) {
-
-      Bitmap bmp = ImageProcessingService.getInstance().fileToBitmap(image.getUrl());
-      ((ImageView) view.findViewById(R.id.gallery_image)).setImageBitmap(bmp);
+      Picasso.get().load(new File(image.getUrl())).into((ImageView) view.findViewById(R.id.gallery_image));
     }
 
   }

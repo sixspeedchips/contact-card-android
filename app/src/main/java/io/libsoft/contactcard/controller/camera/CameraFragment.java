@@ -24,6 +24,7 @@ import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -40,7 +41,7 @@ import io.libsoft.contactcard.model.pojo.Cropper;
 import io.libsoft.contactcard.service.FileManagerService;
 import io.libsoft.contactcard.service.ImageProcessingService;
 import io.libsoft.contactcard.viewmodel.MainViewModel;
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -155,9 +156,12 @@ public class CameraFragment extends Fragment {
 
   private void captureAndPreview() {
     Bitmap bmp = ImageProcessingService.getInstance().getCroppedImage(latestBmp);
-    File file = FileManagerService.getInstance().saveImage(bmp);
     Bundle bundle = new Bundle();
-    bundle.putString("file", file.toString());
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+    byte[] byteArray = stream.toByteArray();
+    bundle.putByteArray("image", byteArray);
+    ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(200);
     Navigation.findNavController(view)
         .navigate(R.id.action_cameraFragment_to_imageReviewFragment, bundle);
 

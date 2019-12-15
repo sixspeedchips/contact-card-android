@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ This work is Copyright, 2019, Isaac Lindland     ~
+  ~ All rights reserved.                             ~
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+  <gradient
+    android:type="linear"
+    android:centerX="24%"
+    android:startColor="#FF6EA2F5"
+    android:centerColor="#FF6EA2F5"
+    android:endColor="#FF00ffff"
+    android:angle="360"/>
+</shape>
+

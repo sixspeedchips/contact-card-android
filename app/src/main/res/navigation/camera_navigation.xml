@@ -6,30 +6,34 @@
   app:startDestination="@id/nav_camera">
 
   <fragment
-    android:id="@+id/contact_fragment"
+    android:id="@+id/nav_contact"
     android:label="fragment_contact"
     android:name="io.libsoft.contactcard.controller.ContactFragment"
     tools:layout="@layout/fragment_contact">
     <action
       android:id="@+id/action_contactFragment_to_cameraFragment"
-      app:destination="@id/nav_camera"/>
-    <action
-      android:id="@+id/action_contactFragment_to_imageReviewFragment"
-      app:destination="@id/imageReviewFragment"/>
+      app:destination="@id/nav_camera"
+      app:enterAnim="@anim/enter_from_right"
+      app:exitAnim="@anim/exit_to_left"/>
   </fragment>
+
   <fragment
-    android:id="@+id/imageReviewFragment"
+    android:id="@+id/nav_image_review"
     android:label="fragment_image_review"
     android:name="io.libsoft.contactcard.controller.ImageReviewFragment"
     tools:layout="@layout/fragment_image_review">
     <action
       android:id="@+id/action_imageReviewFragment_to_contactFragment"
-      app:destination="@id/contact_fragment"
-      app:popUpTo="@id/imageReviewFragment"/>
+      app:destination="@id/nav_contact"
+      app:enterAnim="@anim/enter_from_right"
+      app:exitAnim="@anim/exit_to_left"/>
     <action
       android:id="@+id/action_imageReviewFragment_to_cameraFragment"
-      app:destination="@id/nav_camera"/>
+      app:destination="@id/nav_camera"
+      app:enterAnim="@anim/enter_from_left"
+      app:exitAnim="@anim/exit_to_right"/>
   </fragment>
+
   <fragment
     android:id="@+id/nav_camera"
     android:name="io.libsoft.contactcard.controller.camera.CameraFragment"
@@ -37,11 +41,19 @@
     tools:layout="@layout/fragment_camera">
     <action
       android:id="@+id/action_cameraFragment_to_imageReviewFragment"
-      app:destination="@id/imageReviewFragment"/>
+      app:destination="@id/nav_image_review"
+      app:enterAnim="@anim/enter_from_right"
+      app:exitAnim="@anim/exit_to_left"
+      />
   </fragment>
   <fragment
     android:id="@+id/nav_gallery"
     android:label="fragment_gallery"
     android:name="io.libsoft.contactcard.controller.GalleryFragment"
     tools:layout="@layout/fragment_gallery"/>
+  <fragment
+    android:id="@+id/nav_license"
+    android:label="fragment_license"
+    android:name="io.libsoft.contactcard.service.LicenseFragment"
+    tools:layout="@layout/fragment_license"/>
 </navigation>

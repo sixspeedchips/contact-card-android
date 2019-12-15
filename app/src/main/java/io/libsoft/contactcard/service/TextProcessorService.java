@@ -13,7 +13,6 @@ import androidx.lifecycle.MutableLiveData;
 import io.libsoft.contactcard.model.entity.Contact;
 import io.libsoft.contactcard.model.entity.FirstName;
 import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,11 +37,11 @@ public class TextProcessorService {
 
 
   private TextProcessorService() {
-    vibrator = (Vibrator) applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
     contactHolder = new MutableLiveData<>();
     name = new MutableLiveData<>();
     phone = new MutableLiveData<>();
     email = new MutableLiveData<>();
+    instance = ContactDatabase.getInstance();
   }
 
   /**
@@ -70,49 +69,41 @@ public class TextProcessorService {
   public void process(String rawText) {
 
     new Thread(() -> {
-      name.postValue("");
-      phone.postValue("");
-      email.postValue("");
 
       Pattern phonePattern = Pattern.compile(PHONE_EX);
       Pattern emailPattern = Pattern.compile(EMAIL_EX);
       Log.d(TAG, "process: starting");
-      String[] split = rawText.split("\\s+");
+      String[] split = rawText.toLowerCase().trim().split("\\s+");
+      Log.d(TAG, "process: split length " + split.length);
       Log.d(TAG, "process: split string: " + Arrays.toString(split));
-      List<FirstName> container;
+      FirstName firstName;
 
       for (int i = 0; i < split.length; i++) {
-        instance = ContactDatabase.getInstance();
-        container = instance.getFirstNameDao()
-            .getNameContaining(split[i]);
-        Log.d(TAG, "process: " + container);
-        if (container != null && !container.isEmpty()) {
-          Log.d(TAG, "process: found name " + container.get(0).getName());
-          name.postValue(container.get(0).getName() + " " + split[i + 1].toLowerCase());
+        Log.d(TAG, "process: checking " + split[i]);
+        firstName = instance.getFirstNameDao().getNameContaining(split[i]);
+        Log.d(TAG, "process: " + firstName);
+        if (firstName != null) {
+          Log.d(TAG, "process: found name " + firstName.getName());
+          name.postValue(firstName.getName() + " " + split[i + 1].toLowerCase());
           break;
         }
 
       }
 
-      matcher = phonePattern.matcher(rawText);
-      if (matcher.find()) {
-        Log.d(TAG, "process: found number");
-        phone.postValue(matcher.group(0));
 
-      } else {
-        String p = rawText.replaceAll("[-.—]*", " ");
+        String p = rawText.replaceAll("[-.—_]+", " ");
         matcher = phonePattern.matcher(p);
         if (matcher.find()) {
           Log.d(TAG, "process: found number");
           phone.postValue(matcher.group(0));
         }
 
-      }
       matcher = emailPattern.matcher(rawText);
       if (matcher.find()) {
         Log.d(TAG, "process: email address");
         email.postValue(matcher.group(0));
       }
+      ((Vibrator) applicationContext.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(200);
 
     }).start();
   }
@@ -139,6 +130,12 @@ public class TextProcessorService {
    */
   public MutableLiveData<String> getEmail() {
     return email;
+  }
+
+  public void reset() {
+    name.setValue("");
+    email.setValue("");
+    phone.setValue("");
   }
 
   private static class InstanceHolder {
