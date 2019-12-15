@@ -8,40 +8,15 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   tools:context=".controller.ContactFragment"
-  android:id="@+id/nav_contact">
+  android:id="@+id/nav_contact"
+  android:background="@android:color/darker_gray">
 
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-
-    <EditText
-      android:id="@+id/parsed_name"
-      style="@style/editText"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:hint="@string/name"
-      android:inputType="textPersonName"
-      />
-
-    <EditText
-      android:id="@+id/parsed_phone"
-      style="@style/editText"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:hint="@string/phone"
-      android:inputType="phone"
-      />
-
-    <EditText
-      android:id="@+id/parsed_email"
-      style="@style/editText"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:hint="@string/email"
-      android:inputType="textEmailAddress"
-      />
 
     <ImageView
       android:id="@+id/image_review"
@@ -50,6 +25,93 @@
       android:layout_margin="@dimen/contact_item_margin"
       android:background="@color/colorPrimaryDark"
       />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+      android:id="@+id/name_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      app:hintAnimationEnabled="true"
+      app:hintEnabled="true"
+      >
+      <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edit_name"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:hint="@string/name"
+        android:imeOptions="actionDone"
+        android:inputType="textPersonName"
+        android:shadowColor="#ffffff"
+        android:textColor="#ffffff"
+        android:textColorHighlight="#ffffff"
+        android:textColorHint="#ffffff"
+        android:textSize="24sp"/>
+
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+      android:id="@+id/phone_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      app:hintAnimationEnabled="true"
+      app:hintEnabled="true"
+      >
+      <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edit_phone"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:hint="@string/phone"
+        android:imeOptions="actionDone"
+        android:inputType="phone"
+        android:shadowColor="#ffffff"
+        android:textColor="#ffffff"
+        android:textColorHighlight="#ffffff"
+        android:textColorHint="#ffffff"
+        android:textSize="24sp"/>
+
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+      android:id="@+id/email_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      app:hintAnimationEnabled="true"
+      app:hintEnabled="true"
+      >
+      <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edit_email"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:hint="@string/email"
+        android:imeOptions="actionDone"
+        android:inputType="textEmailAddress"
+        android:shadowColor="#ffffff"
+        android:textColor="#ffffff"
+        android:textColorHighlight="#ffffff"
+        android:textColorHint="#ffffff"
+        android:textSize="24sp"/>
+
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
   </LinearLayout>
 

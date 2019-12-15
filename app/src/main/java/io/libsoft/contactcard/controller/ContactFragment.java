@@ -53,9 +53,9 @@ public class ContactFragment extends Fragment {
 
   private void initViews() {
     imageView = view.findViewById(R.id.image_review);
-    name = view.findViewById(R.id.parsed_name);
-    phone = view.findViewById(R.id.parsed_phone);
-    email = view.findViewById(R.id.parsed_email);
+    name = view.findViewById(R.id.edit_name);
+    phone = view.findViewById(R.id.edit_phone);
+    email = view.findViewById(R.id.edit_email);
   }
 
   private void initListeners() {
